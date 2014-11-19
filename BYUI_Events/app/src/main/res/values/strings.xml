@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">BYUI_Events</string>
+    <string name="app_name">Events</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title">BYUI EVENTS</string>
+    <string name="action_search">Search</string>
+    <string name="title_activity_week">WeekActivity</string>
+    <string name="week">You Made It!</string>
+    <string name="week_tab">Week</string>
     <string name="title_activity_day">DayActivity</string>
+    <string name="title_activity_month">MonthActivity</string>
+    <string name="title_activity_my_events">MyEventsActivity</string>
+    <string name="action_filter">Filter</string>
+    <string name="complete_activities">Activities(complete test)</string>
+    <string name="activities_lifeSkills">Activities/Life Skills</string>
+    <string name="activities_social">Activities/Social</string>
+    <string name="activities_sports">Activities/Sports</string>
+    <string name="activities_talent">Activities/Talent</string>
+    <string name="activities_wellness">Activities/Wellness</string>
+    <string name="alumni_or_reunion">Alumni Event or Reunion</string>
+    <string name="broadcast_conference">Broadcast/Video Conference</string>
+    <string name="performing_visual_arts">College of Performing and Visual Arts</string>
+    <string name="concert">Concert</string>
+    <string name="conference_workshop">Conference/Workshop</string>
+    <string name="devo_speeches">Devotionals and Speeches</string>
+    <string name="get_connected">Get Connected</string>
+    <string name="graduation">Graduation</string>
+    <string name="performance_events">Performance Events(concerts, theatre, etc.)</string>
+    <string name="reception_openhouse">Reception/Openhouse</string>
+    <string name="reception_public">Reception/Openhouse, Public</string>
+    <string name="theatre">Theatre Production</string>
+    <string name="clearFilter">Clear Filters</string>
 
 </resources>

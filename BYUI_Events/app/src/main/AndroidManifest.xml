@@ -4,11 +4,23 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="21" />
+
+    <android:uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="18" />
+
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/ic_main"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/CustomActionBarTheme" >
         <activity
             android:name="com.eventsproject.byui_events.MainActivity"
             android:label="@string/app_name" >
@@ -21,6 +33,18 @@
         <activity
             android:name="com.eventsproject.byui_events.DayActivity"
             android:label="@string/title_activity_day" >
+        </activity>
+        <activity
+            android:name="com.eventsproject.byui_events.WeekActivity"
+            android:label="@string/title_activity_week" >
+        </activity>
+        <activity
+            android:name="com.eventsproject.byui_events.MonthActivity"
+            android:label="@string/title_activity_month" >
+        </activity>
+        <activity
+            android:name="com.eventsproject.byui_events.MyEventsActivity"
+            android:label="@string/title_activity_my_events" >
         </activity>
     </application>
 
