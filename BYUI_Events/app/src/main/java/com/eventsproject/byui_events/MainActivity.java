@@ -214,18 +214,3 @@ public class MainActivity extends TabActivity {
     }*/
 }
 
-
-
-/*public class MainActivity extends Activity {
-
-    private SQLDatabase homeDatabase;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Thread thread = new Thread(new SQLDatabase());
-        thread.start();
-    }
-
-}*/
