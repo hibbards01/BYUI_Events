@@ -1,6 +1,7 @@
 package com.eventsproject.byui_events;
 
 import android.app.TabActivity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ public class MainActivity extends TabActivity {
      */
     private Menu menu; //save the menu
     private SQLDatabase dataBaseHome;
+    private DatabaseHelper db = DatabaseHelper.newInstance(this);
 
     /*
      * MEMBER METHODS
@@ -34,6 +36,7 @@ public class MainActivity extends TabActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Thread thread = new Thread(new SQLDatabase());
         thread.start();
         //create tabs!
@@ -71,9 +74,6 @@ public class MainActivity extends TabActivity {
         }
 
         tabHost.setCurrentTab(1);
-
-        //call the constructor for the database!
-        Log.d("SQL", "HERE!");
 
         /*if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()

@@ -9,6 +9,8 @@ import android.widget.ListView;
 
 public class DayActivity extends ListActivity {
 
+    private DatabaseHelper db = DatabaseHelper.getInstance();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

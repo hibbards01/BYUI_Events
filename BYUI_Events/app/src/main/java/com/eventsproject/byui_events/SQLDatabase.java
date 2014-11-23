@@ -1,6 +1,8 @@
 package com.eventsproject.byui_events;
 
 import java.sql.*;
+
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 /**
@@ -15,6 +17,9 @@ public class SQLDatabase implements Runnable {
     //  Database credentials
     static final String USER = "sam";
     static final String PASS = "hibbard";
+
+    //grab the database!
+    private DatabaseHelper db = DatabaseHelper.getInstance();
 
     /**
      * GETDATA
@@ -39,24 +44,35 @@ public class SQLDatabase implements Runnable {
             Log.d("SQL: ","Creating statement...");
             stmt = conn.createStatement();
             String sql;
-            sql = "SELECT event_id, name, description, date, start_time, end_time FROM event";
+            sql = "SELECT event_id, name, description, date, start_time, end_time, category, location FROM event";
             ResultSet rs = stmt.executeQuery(sql);
 
             //STEP 5: Extract data from result set
             while(rs.next()) {
                 //Retrieve by column name
-                String name = rs.getString("name");
-                String description = rs.getString("description");
-                String date = rs.getString("date");
-                String start_time = rs.getString("start_time");
-                String end_time = rs.getString("end_time");
+                String [] data = new String[8];
+
+                /****************************************************************
+                 * NOTE these are in a certain order. If you change this then make
+                 * sure to change the order in the DATABASEHELPER in the function ADDEVENT.
+                 ****************************************************************/
+                data[0] = rs.getString("event_id");
+                data[1] = rs.getString("name");
+                data[2] = rs.getString("date");
+                data[3] = rs.getString("start_time");
+                data[4] = rs.getString("end_time");
+                data[5] = rs.getString("description");
+                data[6] = rs.getString("category");
+                data[7] = rs.getString("location");
+
+                //now insert it into the table!
+                db.addEvent(data);
 
                 //Display values
-                //System.out.print("ID: " + id);
-                //System.out.print(", Age: " + age);
-                Log.d("SQL: ","Name: " + name + "  date: " + date + "  start_time: " + start_time + "  end_time: " + end_time);
+                Log.d("SQL: ", "ID: " + data[0]);
+                Log.d("SQL: ","Name: " + data[1] + "  date: " + data[2] + "  start_time: " + data[3] + "  end_time: " + data[4]);
 
-                Log.d("SQL: ","description: " + description);
+                Log.d("SQL: ","description: " + data[5]);
             }
 
             //STEP 6: Clean-up environment
