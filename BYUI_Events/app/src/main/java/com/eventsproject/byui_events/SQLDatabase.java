@@ -69,10 +69,10 @@ public class SQLDatabase implements Runnable {
                 db.addEvent(data);
 
                 //Display values
-                Log.d("SQL: ", "ID: " + data[0]);
-                Log.d("SQL: ","Name: " + data[1] + "  date: " + data[2] + "  start_time: " + data[3] + "  end_time: " + data[4]);
-
-                Log.d("SQL: ","description: " + data[5]);
+//                Log.d("SQL: ", "ID: " + data[0]);
+//                Log.d("SQL: ","Name: " + data[1] + "  date: " + data[2] + "  start_time: " + data[3] + "  end_time: " + data[4]);
+//
+//                Log.d("SQL: ","description: " + data[5]);
             }
 
             //STEP 6: Clean-up environment

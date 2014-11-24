@@ -7,8 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
+import android.widget.ListView;
 
 import java.sql.Blob;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by SamuelHibbard on 11/19/14.
@@ -47,7 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //create tables
     private static final String SQL_CREATE_EVENT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_EVENT_NAME
-            + "( event_id    INTEGER  PRIMARY KEY NOT NULL"
+            + "( event_id    INTEGER  PRIMARY KEY AUTOINCREMENT"
             + ", name        TEXT     NOT NULL"
             + ", date        TEXT"
             + ", start_time  TEXT"
@@ -137,7 +140,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         //now grab the values!
-        values.put(DBEvent.COLUMN_EVENT_ID, data[0]);
+//        values.put(DBEvent.COLUMN_EVENT_ID, Integer.parseInt(data[0]));
         values.put(DBEvent.COLUMN_NAME, data[1]);
         values.put(DBEvent.COLUMN_DATE, data[2]);
         values.put(DBEvent.COLUMN_START_TIME, data[3]);
@@ -166,6 +169,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor data = null;
 
+        db.close();
+
         return;
     }
 
@@ -174,7 +179,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *  Grab the event on the date!
      * @param date
      */
-    public void getEvent(String date) {
+    public List<Event> getEvent(String date) {
+        Log.d("SQL_getEvent: ", "Grabbing the event!");
+        //now grab from the datebase!
+        SQLiteDatabase db = this.getReadableDatabase();
 
+        //now select it!
+        Cursor cursor = db.rawQuery("SELECT * FROM event WHERE date = '"
+                                    + date + "'", null);
+
+        //now grab the data!
+        List<Event> list = new ArrayList<Event>();
+
+        //make sure that we found something!
+        if (cursor != null && cursor.getCount() > 0) {
+            Log.d("SQL_getEvent: ", "Found some data!");
+            cursor.moveToFirst();
+
+            //now loop thru them all!
+            for (int i = 0; i < cursor.getCount(); i++) {
+                //create some strings and grab it!
+                String event_id = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_EVENT_ID));
+                String name = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_NAME));
+                String grabDate = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_DATE));
+                String startTime = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_START_TIME));
+                String endTime = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_END_TIME));
+                String description = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_DESCRIPTION));
+                String category = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_CATEGORY));
+                String location = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_LOCATION));
+
+                //phew! now the create a new event!
+                Event event = new Event(event_id, name, grabDate, startTime, endTime, description,
+                                        category, location);
+
+                //now add to the list!
+                list.add(i, event);
+
+                //now move to the next data!
+                cursor.moveToNext();
+
+                Log.d("SQL_getEvent: ", event_id + " " + name + " " + grabDate + " " + location);
+            }
+        }
+
+        db.close();
+
+        return list;
+    }
+
+    public void deleteFromEvent() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_EVENT_NAME, null, null);
     }
 }
