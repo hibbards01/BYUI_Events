@@ -12,6 +12,7 @@ import android.widget.ListView;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by SamuelHibbard on 11/19/14.
@@ -50,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //create tables
     private static final String SQL_CREATE_EVENT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_EVENT_NAME
-            + "( event_id    INTEGER  PRIMARY KEY AUTOINCREMENT"
+            + "( event_id    INTEGER  PRIMARY KEY NOT NULL"
             + ", name        TEXT     NOT NULL"
             + ", date        TEXT"
             + ", start_time  TEXT"
@@ -81,12 +82,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public static DatabaseHelper newInstance(Context context) {
 
-        Log.d("SQL: ", "Entered into newInstance");
         if (db == null) {
-            Log.d("SQL: ", "Created new database");
+            context.deleteDatabase(DATABASE_NAME);
             db = new DatabaseHelper(context);
         }
-
         return db;
     }
 
@@ -140,7 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         //now grab the values!
-//        values.put(DBEvent.COLUMN_EVENT_ID, Integer.parseInt(data[0]));
+        values.put(DBEvent.COLUMN_EVENT_ID, Integer.parseInt(data[0]));
         values.put(DBEvent.COLUMN_NAME, data[1]);
         values.put(DBEvent.COLUMN_DATE, data[2]);
         values.put(DBEvent.COLUMN_START_TIME, data[3]);
@@ -179,7 +178,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *  Grab the event on the date!
      * @param date
      */
-    public List<Event> getEvent(String date) {
+    public void getEvent(String date, List<String> titleList, Map<String, String> childList) {
         Log.d("SQL_getEvent: ", "Grabbing the event!");
         //now grab from the datebase!
         SQLiteDatabase db = this.getReadableDatabase();
@@ -188,8 +187,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM event WHERE date = '"
                                     + date + "'", null);
 
-        //now grab the data!
-        List<Event> list = new ArrayList<Event>();
+        String title;
+        String child;
+        int index = 0;
 
         //make sure that we found something!
         if (cursor != null && cursor.getCount() > 0) {
@@ -209,11 +209,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String location = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_LOCATION));
 
                 //phew! now the create a new event!
-                Event event = new Event(event_id, name, grabDate, startTime, endTime, description,
-                                        category, location);
+//                Event event = new Event(event_id, name, grabDate, startTime, endTime, description,
+//                                        category, location);
 
-                //now add to the list!
-                list.add(i, event);
+                //grab title and child!
+                title = name + " " + grabDate + " " + startTime + "-" + endTime;
+                child = location + "\n" + category + "\n\n" + description;
+
+                //now add to the TITLELIST and CHILDLIST!
+                titleList.add(index++, title);
+                childList.put(title, child);
 
                 //now move to the next data!
                 cursor.moveToNext();
@@ -223,8 +228,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         db.close();
-
-        return list;
     }
 
     public void deleteFromEvent() {

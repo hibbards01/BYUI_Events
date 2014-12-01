@@ -1,7 +1,7 @@
 package com.eventsproject.byui_events;
 
 import java.sql.*;
-
+import java.lang.Object;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -103,5 +103,11 @@ public class SQLDatabase implements Runnable {
             }//end finally try
         }//end try
         Log.d("SQL: ","Goodbye!");
+
+//        try {
+//            this.notify();
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
     }
 }

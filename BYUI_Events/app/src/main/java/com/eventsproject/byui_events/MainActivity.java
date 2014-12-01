@@ -39,6 +39,13 @@ public class MainActivity extends TabActivity {
 
         Thread thread = new Thread(new SQLDatabase());
         thread.start();
+
+        try {
+            Thread.sleep(10000);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         //create tabs!
         TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
 
