@@ -12,7 +12,7 @@ import android.util.Log;
 public class SQLDatabase implements Runnable {
     //  Database URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://174.27.90.72:3306/byui_events";
+    static final String DB_URL = "jdbc:mysql://71.209.33.122:3306/byui_events";
 
     //  Database credentials
     static final String USER = "sam";

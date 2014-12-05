@@ -20,6 +20,7 @@ import java.util.Map;
 public class DatabaseHelper extends SQLiteOpenHelper {
     //only want one instance of database!
     private static DatabaseHelper db = null;
+    private static Context mainContext = null;
 
     // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 1;
@@ -45,12 +46,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //table names
     private static final String TABLE_EVENT_NAME = "event";
+    private static final String TABLE_SAVED_EVENTS = "saved_events";
     private static final String TABLE_COMMON_LOOKUP_NAME = "common_lookup";
     private static final String TABLE_FILTER_NAME = "filter";
 
     //create tables
     private static final String SQL_CREATE_EVENT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_EVENT_NAME
+            + "( event_id    INTEGER  PRIMARY KEY NOT NULL"
+            + ", name        TEXT     NOT NULL"
+            + ", date        TEXT"
+            + ", start_time  TEXT"
+            + ", end_time    TEXT"
+            + ", description TEXT"
+            + ", category    TEXT"
+            + ", location    TEXT)";
+
+    private static final String SQL_CREATE_SAVED_EVENTS_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + TABLE_SAVED_EVENTS
             + "( event_id    INTEGER  PRIMARY KEY NOT NULL"
             + ", name        TEXT     NOT NULL"
             + ", date        TEXT"
@@ -73,6 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private DatabaseHelper(Context context) {
         //create the database!
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.mainContext = context;
     }
 
     /**
@@ -83,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static DatabaseHelper newInstance(Context context) {
 
         if (db == null) {
-            context.deleteDatabase(DATABASE_NAME);
+            //context.deleteDatabase(DATABASE_NAME);
             db = new DatabaseHelper(context);
         }
         return db;
@@ -139,7 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         //now grab the values!
-        values.put(DBEvent.COLUMN_EVENT_ID, Integer.parseInt(data[0]));
+        //values.put(DBEvent.COLUMN_EVENT_ID, Integer.parseInt(data[0]));
         values.put(DBEvent.COLUMN_NAME, data[1]);
         values.put(DBEvent.COLUMN_DATE, data[2]);
         values.put(DBEvent.COLUMN_START_TIME, data[3]);
@@ -162,11 +176,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param start_date
      * @param end_date
      */
-    public void getEventsBetweenDates(String start_date, String end_date) {
+    public void getEventsBetweenDates(String start_date, String end_date, List<String> titleList, Map<String, String> childList) {
         //grab the database!
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor data = null;
+        Cursor cursor = db.rawQuery("SELECT * FROM event WHERE date "
+                                    + "BETWEEN '" + start_date + "' AND '"
+                                    + end_date + "'", null);
+
+        //now grab from it!
+        grabFromCursor(cursor, titleList, childList);
 
         db.close();
 
@@ -174,19 +193,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * GETEVENT
-     *  Grab the event on the date!
-     * @param date
+     * GRABFROMCURSOR
+     *  Grab the events!
+     * @param cursor
+     * @param titleList
+     * @param childList
      */
-    public void getEvent(String date, List<String> titleList, Map<String, String> childList) {
-        Log.d("SQL_getEvent: ", "Grabbing the event!");
-        //now grab from the datebase!
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        //now select it!
-        Cursor cursor = db.rawQuery("SELECT * FROM event WHERE date = '"
-                                    + date + "'", null);
-
+    public void grabFromCursor(Cursor cursor, List<String> titleList, Map<String, String> childList) {
+        //create some variables!
         String title;
         String child;
         int index = 0;
@@ -213,8 +227,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //                                        category, location);
 
                 //grab title and child!
-                title = name + " " + grabDate + " " + startTime + "-" + endTime;
-                child = location + "\n" + category + "\n\n" + description;
+                title = name + "\n\n" + dateFormat(grabDate) + " " + startTime + "-" + endTime;
+                child = "Location: " +  location + "\n" + category + "\n\n" + description;
 
                 //now add to the TITLELIST and CHILDLIST!
                 titleList.add(index++, title);
@@ -226,12 +240,66 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Log.d("SQL_getEvent: ", event_id + " " + name + " " + grabDate + " " + location);
             }
         }
+    }
+
+    /**
+     * GETEVENT
+     *  Grab the event on the date!
+     * @param date
+     */
+    public void getEvent(String date, List<String> titleList, Map<String, String> childList) {
+        Log.d("SQL_getEvent: ", "Grabbing the event!");
+        //now grab from the datebase!
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        //now select it!
+        Cursor cursor = db.rawQuery("SELECT * FROM event WHERE date = '"
+                                    + date + "'", null);
+
+        //now grab from the cursor!
+        grabFromCursor(cursor, titleList, childList);
 
         db.close();
+    }
+
+    /**
+     * DATEFORMAT
+     *  Change the format of the date!
+     * @param textDate
+     * @return
+     */
+    public String dateFormat(String textDate) {
+        //create the variables!
+        String date;
+        String [] splitDate = textDate.split("-");
+        String [] month = {
+                "none", "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+        };
+
+        date = month[Integer.parseInt(splitDate[1])] + " " + splitDate[2] + " " + splitDate[0];
+
+        return date;
+    }
+
+    /**
+     * TIMEFORMAT
+     *  Change the format for the time!
+     * @param textTime
+     * @return
+     */
+    public String timeFormat(String textTime) {
+
+
+        return textTime;
     }
 
     public void deleteFromEvent() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_EVENT_NAME, null, null);
+    }
+
+    public void deleteDB() {
+        mainContext.deleteDatabase(DATABASE_NAME);
     }
 }

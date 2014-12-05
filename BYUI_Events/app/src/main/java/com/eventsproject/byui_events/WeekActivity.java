@@ -6,31 +6,65 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.app.ListActivity;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.view.View;
+import android.widget.TextView;
 
-public class WeekActivity extends ListActivity {
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class WeekActivity extends Activity {
+
+    private ExpandableListViewAdapter adapter;
+    private ExpandableListView list;
+    private DatabaseHelper db = DatabaseHelper.getInstance();
+    private List<String> header = new ArrayList<String>();
+    private Map<String, String> childList = new HashMap<String, String>();
+    private TextView weekDateView;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_week);
 
-        String [] list = new String[] {
-                "Linux Meeting", "Career Fair", "I-Connect", "Game Night",
-                "Theater", "Stem Fair", "Basketball", "Baseball", "Softball",
-                "Ping Pong", "Racket ball", "Car Show", "English", "Math",
-                "Red Hat", "Jumping Ropes"
-        };
+        list = (ExpandableListView) findViewById(R.id.week_list);
+        weekDateView = (TextView) findViewById(R.id.week_view);
+
+        //grab the date!
+        Date date = new Date();
+        String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
+        //now grab from the database!
+        //db.getEvent(textDate, header, childList);
+
+        //and grab the date so it can be at the title!
+        //textDate = dateFormat(textDate);
+        //dateView.setText(textDate);
 
         //now to put it on the screen!
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.activity_week,
-                R.id.label, list);
-        setListAdapter(adapter);
+        adapter = new ExpandableListViewAdapter(this, header, childList);
+
+        //now set it to the screen!
+        list.setAdapter(adapter);
     }
 
-    @Override
-    public void onListItemClick(ListView list, View v, int position, long id) {
+    private String dateFormat(String textDate) {
+        //create the variables!
+        String date = "";
+        String [] splitDate = textDate.split("-");
+        String [] month = {
+                "none", "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+        };
 
+        return date;
     }
 }
 
