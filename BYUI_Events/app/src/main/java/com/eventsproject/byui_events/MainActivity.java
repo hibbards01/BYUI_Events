@@ -146,7 +146,7 @@ public class MainActivity extends TabActivity {
         switch(id) {
             case R.id.action_settings:
                 Toast.makeText(this, "Running settings", Toast.LENGTH_LONG).show();
-                db.deleteFromEvent();
+                db.deleteDB();
                 return true;
             case R.id.action_search:
                 Toast.makeText(this, "Running search", Toast.LENGTH_LONG).show();

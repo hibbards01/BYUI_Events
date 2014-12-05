@@ -8,6 +8,8 @@
         android:layout_height="wrap_content"
         android:text="@+id/label"
         android:textSize="20sp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"/>
 
 </LinearLayout>

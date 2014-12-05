@@ -10,7 +10,12 @@ import android.util.Log;
 import android.widget.ListView;
 
 import java.sql.Blob;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +65,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + ", end_time    TEXT"
             + ", description TEXT"
             + ", category    TEXT"
-            + ", location    TEXT)";
+            + ", location    TEXT"
+            + ", picture     BLOB)";
 
     private static final String SQL_CREATE_SAVED_EVENTS_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_SAVED_EVENTS
@@ -122,6 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_EVENT_TABLE);
         Log.d("SQLCreated:", "Created table!");
+        db.close();
     }
 
     /**
@@ -137,6 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_TABLE + TABLE_EVENT_NAME);
         //now create them!
         onCreate(db);
+        db.close();
     }
 
     /**
@@ -144,8 +152,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      *  Insert the data into the database!
      * @return
      */
-    public void addEvent(String [] data) {
+    public void addEvent(String [] data, Blob pic) {
         Log.d("SQL:", "Adding to database!");
+
+        byte[] bytes = null;
+
+        if (pic != null) {
+            //convert blob!
+            try {
+                int length = (int) pic.length();
+                bytes = pic.getBytes(1, length);
+            } catch (SQLException s) {
+                s.printStackTrace();
+            }
+        }
+
+
         //get the database!
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -161,6 +183,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(DBEvent.COLUMN_DESCRIPTION, data[5]);
         values.put(DBEvent.COLUMN_CATEGORY, data[6]);
         values.put(DBEvent.COLUMN_LOCATION, data[7]);
+
+        if (bytes != null) {
+            values.put(DBEvent.COLUMN_PICTURE, bytes);
+        } else {
+            Log.d("SQL: ", "Couldn't add picture!");
+        }
 
         //now insert them!
         db.insert(TABLE_EVENT_NAME, null, values);
@@ -221,13 +249,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String description = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_DESCRIPTION));
                 String category = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_CATEGORY));
                 String location = cursor.getString(cursor.getColumnIndex(DBEvent.COLUMN_LOCATION));
+                //byte [] pics = cursor.getBlob(cursor.getColumnIndex(DBEvent.COLUMN_PICTURE));
+
+                //convert the picture!
 
                 //phew! now the create a new event!
 //                Event event = new Event(event_id, name, grabDate, startTime, endTime, description,
 //                                        category, location);
 
                 //grab title and child!
-                title = name + "\n\n" + dateFormat(grabDate) + " " + startTime + "-" + endTime;
+                title = name + "\n\n" + dateFormat(grabDate) + " " + timeFormat(startTime) + "-" + timeFormat(endTime);
                 child = "Location: " +  location + "\n" + category + "\n\n" + description;
 
                 //now add to the TITLELIST and CHILDLIST!
@@ -237,7 +268,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 //now move to the next data!
                 cursor.moveToNext();
 
-                Log.d("SQL_getEvent: ", event_id + " " + name + " " + grabDate + " " + location);
+                Log.d("SQL_getEvent: ", timeFormat(startTime));
             }
         }
     }
@@ -289,14 +320,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return
      */
     public String timeFormat(String textTime) {
+        //make a new time!
+        String[] splitTime = textTime.split(":");
+        String time = splitTime[0] + splitTime[1];
 
+        try {
+            Date date = new SimpleDateFormat("hhmm").parse(time);
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+            time = sdf.format(date);
+        } catch (ParseException pex) {
+            pex.printStackTrace();
+        }
 
-        return textTime;
+        return time;
     }
 
     public void deleteFromEvent() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_EVENT_NAME, null, null);
+        db.close();
     }
 
     public void deleteDB() {

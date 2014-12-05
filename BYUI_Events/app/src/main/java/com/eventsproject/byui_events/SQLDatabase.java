@@ -44,7 +44,7 @@ public class SQLDatabase implements Runnable {
             Log.d("SQL: ","Creating statement...");
             stmt = conn.createStatement();
             String sql;
-            sql = "SELECT event_id, name, description, date, start_time, end_time, category, location FROM event";
+            sql = "SELECT event_id, name, description, date, start_time, end_time, category, location, picture FROM event";
             ResultSet rs = stmt.executeQuery(sql);
 
             //STEP 5: Extract data from result set
@@ -64,9 +64,10 @@ public class SQLDatabase implements Runnable {
                 data[5] = rs.getString("description");
                 data[6] = rs.getString("category");
                 data[7] = rs.getString("location");
+                Blob pic = rs.getBlob("picture");
 
                 //now insert it into the table!
-                db.addEvent(data);
+                db.addEvent(data, pic);
 
                 //Display values
 //                Log.d("SQL: ", "ID: " + data[0]);
