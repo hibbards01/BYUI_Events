@@ -21,7 +21,8 @@ public class MainActivity extends TabActivity {
      */
     private Menu menu; //save the menu
     private SQLDatabase dataBaseHome;
-    private DatabaseHelper db = DatabaseHelper.newInstance(this);
+    //private DatabaseHelper db = DatabaseHelper.newInstance(this);
+    private Database db = null;
 
     /*
      * MEMBER METHODS
@@ -38,14 +39,11 @@ public class MainActivity extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Database database = Database.newInstance(this);
+        db = Database.getInstance();
+
         Thread thread = new Thread(new SQLDatabase());
         thread.start();
-
-        try {
-            Thread.sleep(10000);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
 
         //create tabs!
         TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
@@ -146,7 +144,7 @@ public class MainActivity extends TabActivity {
         switch(id) {
             case R.id.action_settings:
                 Toast.makeText(this, "Running settings", Toast.LENGTH_LONG).show();
-                db.deleteDB();
+                db.deleteEvents();
                 return true;
             case R.id.action_search:
                 Toast.makeText(this, "Running search", Toast.LENGTH_LONG).show();
@@ -205,21 +203,5 @@ public class MainActivity extends TabActivity {
             }
         }
     }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    /*public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-    }*/
 }
 

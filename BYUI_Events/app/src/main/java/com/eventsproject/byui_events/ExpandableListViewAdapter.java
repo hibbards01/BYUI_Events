@@ -1,13 +1,20 @@
 package com.eventsproject.byui_events;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import org.w3c.dom.Text;
+
+import java.sql.Blob;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -22,7 +29,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> titleList;
     private Map<String, String> childList;
-
+    private List<byte[]> images;
     /*
      * MEMBER METHODS
      */
@@ -35,10 +42,12 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
      * @param childList
      */
     public ExpandableListViewAdapter(Context context, List<String> list,
-                                     Map<String, String> childList) {
+                                     Map<String, String> childList, List<byte[]> images) {
         this.context = context;
         this.titleList = list;
         this.childList = childList;
+        this.images = images;
+        //Log.d("SQL_images_size: ", Integer.toString(images.size()));
     }
 
     /**
@@ -56,6 +65,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
                              View view, ViewGroup parent) {
         //grab the child text!
         String childText = (String) getChild(groupPosition, childPosition);
+        byte[] image = getImage(groupPosition);
 
         //now put it into the view!
         if (view == null) {
@@ -69,6 +79,23 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
         //now add the child text!
         TextView childView = (TextView) view.findViewById(R.id.list_child_view);
+
+        //check to make sure there is something there!
+        if (image != null && image.length > 0) {
+            Log.d("Image: ", Integer.toString(image.length));
+            ImageView imageView = (ImageView) view.findViewById(R.id.image_view);
+
+            //convert the bytes to an image!
+            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+
+            if (imageView != null) {
+                //now set the image!
+                Log.d("Bitmap:", bitmap.toString());
+                imageView.setImageBitmap(bitmap);
+            } else {
+                Log.d("IMAGEVIEW", "NULL");
+            }
+        }
 
         //now set the text!
         childView.setText(childText);
@@ -118,6 +145,16 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         return childList.get(titleList.get(groupPosition));
+    }
+
+    /**
+     * GETIMAGE
+     *  Grab the image!
+     * @param groupPosition
+     * @return
+     */
+    public byte[] getImage(int groupPosition) {
+        return images.get(groupPosition);
     }
 
     /**

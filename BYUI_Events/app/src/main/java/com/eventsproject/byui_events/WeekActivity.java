@@ -49,7 +49,7 @@ public class WeekActivity extends Activity {
         //dateView.setText(textDate);
 
         //now to put it on the screen!
-        adapter = new ExpandableListViewAdapter(this, header, childList);
+        //adapter = new ExpandableListViewAdapter(this, header, childList);
 
         //now set it to the screen!
         list.setAdapter(adapter);

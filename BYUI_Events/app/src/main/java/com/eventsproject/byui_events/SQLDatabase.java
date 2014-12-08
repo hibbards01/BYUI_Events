@@ -19,7 +19,7 @@ public class SQLDatabase implements Runnable {
     static final String PASS = "hibbard";
 
     //grab the database!
-    private DatabaseHelper db = DatabaseHelper.getInstance();
+    private Database database = Database.getInstance();
 
     /**
      * GETDATA
@@ -64,16 +64,10 @@ public class SQLDatabase implements Runnable {
                 data[5] = rs.getString("description");
                 data[6] = rs.getString("category");
                 data[7] = rs.getString("location");
-                Blob pic = rs.getBlob("picture");
+                byte [] pic = rs.getBytes("picture");
 
                 //now insert it into the table!
-                db.addEvent(data, pic);
-
-                //Display values
-//                Log.d("SQL: ", "ID: " + data[0]);
-//                Log.d("SQL: ","Name: " + data[1] + "  date: " + data[2] + "  start_time: " + data[3] + "  end_time: " + data[4]);
-//
-//                Log.d("SQL: ","description: " + data[5]);
+                database.insertEvent(data, pic);
             }
 
             //STEP 6: Clean-up environment

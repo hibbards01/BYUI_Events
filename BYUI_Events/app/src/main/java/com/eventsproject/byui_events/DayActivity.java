@@ -19,13 +19,26 @@ import java.util.Map;
 
 public class DayActivity extends Activity {
 
-    private DatabaseHelper db = DatabaseHelper.getInstance();
+    /*
+     * MEMBER VARIABLES
+     */
     private List<String> headerList = new ArrayList<String>();
     private Map<String, String> childList = new HashMap<String, String>();
+    private List<byte[]> images = new ArrayList<byte[]>();
     private ExpandableListViewAdapter listAdapter;
     private ExpandableListView expListView;
     private TextView dateView;
+    private Database database = Database.getInstance();
 
+    /*
+     * MEMBER METHODS
+     */
+
+    /**
+     * ONCREATE
+     *  Create the list and display it!
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,14 +52,14 @@ public class DayActivity extends Activity {
         String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
         //now grab from the database!
-        db.getEvent(textDate, headerList, childList);
+        database.selectEvents(textDate, headerList, childList, images);
 
         //and grab the date so it can be at the title!
         textDate = dateFormat(textDate);
         dateView.setText(textDate);
 
         //now to put it on the screen!
-        listAdapter = new ExpandableListViewAdapter(this, headerList, childList);
+        listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images);
 
         //now set it to the screen!
         expListView.setAdapter(listAdapter);

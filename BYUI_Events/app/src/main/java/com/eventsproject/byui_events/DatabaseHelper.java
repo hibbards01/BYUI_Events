@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 import android.util.Log;
 import android.widget.ListView;
-
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -58,7 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //create tables
     private static final String SQL_CREATE_EVENT_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_EVENT_NAME
-            + "( event_id    INTEGER  PRIMARY KEY NOT NULL"
+            + "( event_id    INTEGER  NOT NULL"
             + ", name        TEXT     NOT NULL"
             + ", date        TEXT"
             + ", start_time  TEXT"
@@ -70,7 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_SAVED_EVENTS_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TABLE_SAVED_EVENTS
-            + "( event_id    INTEGER  PRIMARY KEY NOT NULL"
+            + "( event_id    INTEGER  NOT NULL"
             + ", name        TEXT     NOT NULL"
             + ", date        TEXT"
             + ", start_time  TEXT"
@@ -92,6 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private DatabaseHelper(Context context) {
         //create the database!
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        Log.d("SQL: ", "DATABASE");
         this.mainContext = context;
     }
 
@@ -204,21 +204,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param start_date
      * @param end_date
      */
-    public void getEventsBetweenDates(String start_date, String end_date, List<String> titleList, Map<String, String> childList) {
-        //grab the database!
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM event WHERE date "
-                                    + "BETWEEN '" + start_date + "' AND '"
-                                    + end_date + "'", null);
-
-        //now grab from it!
-        grabFromCursor(cursor, titleList, childList);
-
-        db.close();
-
-        return;
-    }
+//    public void getEventsBetweenDates(String start_date, String end_date, List<String> titleList, Map<String, String> childList) {
+//        //grab the database!
+//        SQLiteDatabase db = this.getReadableDatabase();
+//
+//        Cursor cursor = db.rawQuery("SELECT * FROM event WHERE date "
+//                                    + "BETWEEN '" + start_date + "' AND '"
+//                                    + end_date + "'", null);
+//
+//        //now grab from it!
+//        grabFromCursor(cursor, titleList, childList);
+//        cursor.close();
+//
+//        db.close();
+//
+//        return;
+//    }
 
     /**
      * GRABFROMCURSOR
@@ -258,7 +259,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //                                        category, location);
 
                 //grab title and child!
-                title = name + "\n\n" + dateFormat(grabDate) + " " + timeFormat(startTime) + "-" + timeFormat(endTime);
+                title = name + "\n\n" + grabDate + "  " + timeFormat(startTime) + "-" + timeFormat(endTime);
                 child = "Location: " +  location + "\n" + category + "\n\n" + description;
 
                 //now add to the TITLELIST and CHILDLIST!
@@ -289,6 +290,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //now grab from the cursor!
         grabFromCursor(cursor, titleList, childList);
+
+        cursor.close();
 
         db.close();
     }
