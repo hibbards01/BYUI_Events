@@ -23,7 +23,7 @@ public class DayActivity extends Activity {
      * MEMBER VARIABLES
      */
     private List<String> headerList = new ArrayList<String>();
-    private Map<String, String> childList = new HashMap<String, String>();
+    private HashMap<String, String> childList = new HashMap<String, String>();
     private List<byte[]> images = new ArrayList<byte[]>();
     private ExpandableListViewAdapter listAdapter;
     private ExpandableListView expListView;

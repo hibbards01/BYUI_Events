@@ -46,6 +46,7 @@ public class MainActivity extends TabActivity {
         thread.start();
 
         //create tabs!
+
         TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
 
         TabHost.TabSpec tab1 = tabHost.newTabSpec("DayTab");
@@ -76,7 +77,7 @@ public class MainActivity extends TabActivity {
         for(int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
             TextView textView = (TextView)tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
             textView.setTextColor(getResources().getColor(R.color.white));
-            textView.setTextSize(15);
+            textView.setTextSize(10);
         }
 
         tabHost.setCurrentTab(1);
