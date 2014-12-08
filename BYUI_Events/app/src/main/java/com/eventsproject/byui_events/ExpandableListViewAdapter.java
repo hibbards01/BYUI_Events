@@ -63,12 +63,15 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                              View view, ViewGroup parent) {
+        Log.d("First Line", "No No!");
         //grab the child text!
         String childText = (String) getChild(groupPosition, childPosition);
         byte[] image = getImage(groupPosition);
 
+        Log.d("I'm in ChildView", " Yes I am");
         //now put it into the view!
         if (view == null) {
+            Log.d("View:", "Creating View");
             LayoutInflater layoutInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
