@@ -2,7 +2,10 @@ package com.eventsproject.byui_events;
 
 import java.sql.*;
 import java.lang.Object;
+
+import android.app.ProgressDialog;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
 import android.util.Log;
 
 /**
@@ -21,10 +24,18 @@ public class SQLDatabase implements Runnable {
     //grab the database!
     private Database database = Database.getInstance();
 
+    private ProgressDialog progressDialog;
+    private Handler handler;
+
+    public SQLDatabase(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
+    }
+
     /**
      * GETDATA
      *  This will grab from the database!
      */
+    @Override
     public void run() {
         //create the variables!
         Connection conn = null;
@@ -97,7 +108,8 @@ public class SQLDatabase implements Runnable {
                 se.printStackTrace();
             }//end finally try
         }//end try
-        Log.d("SQL: ","Goodbye!");
+        Log.d("SQL: ", "Goodbye!");
+        progressDialog.dismiss();
 
 //        try {
 //            this.notify();

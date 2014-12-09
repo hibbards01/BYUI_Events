@@ -1,5 +1,6 @@
 package com.eventsproject.byui_events;
 
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -42,7 +43,14 @@ public class MainActivity extends TabActivity {
         Database database = Database.newInstance(this);
         db = Database.getInstance();
 
-        Thread thread = new Thread(new SQLDatabase());
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Updating Events");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        Thread thread = new Thread(new SQLDatabase(progressDialog));
         thread.start();
 
         //create tabs!

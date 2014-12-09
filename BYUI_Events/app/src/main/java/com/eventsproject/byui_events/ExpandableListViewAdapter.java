@@ -42,7 +42,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
      * @param childList
      */
     public ExpandableListViewAdapter(Context context, List<String> list,
-                                     HashMap<String, String> childList, List<byte[]> images) {
+                                     Map<String, String> childList, List<byte[]> images) {
         this.context = context;
         this.titleList = list;
         this.childList = childList;
@@ -63,14 +63,12 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
                              View view, ViewGroup parent) {
-        Log.d("GETCHILDVIEW", "Grabbing child!");
         //grab the child text!
         String childText = (String) getChild(groupPosition, childPosition);
-        //byte[] image = getImage(groupPosition);
+        byte[] image = getImage(groupPosition);
 
         //now put it into the view!
         if (view == null) {
-            Log.d("VIEW: ", "view created!");
             LayoutInflater layoutInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -78,30 +76,31 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
             view = layoutInflater.inflate(R.layout.list_child_view, null);
         }
 
-        //check to make sure there is something there!
-//        if (image != null && image.length > 0) {
-//            Log.d("Image: ", Integer.toString(image.length));
-//            ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
-//
-//            //convert the bytes to an image!
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-//
-//            if (imageView != null) {
-//                //now set the image!
-//                Log.d("Bitmap:", bitmap.toString());
-//                imageView.setImageBitmap(bitmap);
-//            } else {
-//                Log.d("IMAGEVIEW", "NULL");
-//            }
-//        }
 
-        //now set the text!
+        //now add the child text!
         TextView childView = (TextView) view.findViewById(R.id.list_child_view);
-        if (childText != null) {
-            childView.setText(childText);
+
+        //check to make sure there is something there!
+        if (image != null && image.length > 0) {
+            Log.d("Image: ", Integer.toString(image.length));
+            ImageView imageView = (ImageView) view.findViewById(R.id.image_view);
+
+            //convert the bytes to an image!
+            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+
+            if (imageView != null) {
+                //now set the image!
+                Log.d("Bitmap:", bitmap.toString());
+                imageView.setImageBitmap(bitmap);
+            } else {
+                Log.d("IMAGEVIEW", "NULL");
+            }
         }
 
-        return view;
+        //now set the text!
+        childView.setText(childText);
+
+        return childView;
     }
 
     /**
@@ -130,11 +129,8 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
         //now add the title text!
         TextView titleView = (TextView) view.findViewById(R.id.list_view);
-
-        if (title != null) {
-            titleView.setTypeface(null, Typeface.BOLD);
-            titleView.setText(title);
-        }
+        titleView.setTypeface(null, Typeface.BOLD);
+        titleView.setText(title);
 
         return titleView;
     }
