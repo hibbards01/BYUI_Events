@@ -5,6 +5,7 @@ import java.lang.Object;
 
 import android.app.ProgressDialog;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
 import android.util.Log;
 
 /**
@@ -24,6 +25,7 @@ public class SQLDatabase implements Runnable {
     private Database database = Database.getInstance();
 
     private ProgressDialog progressDialog;
+    private Handler handler;
 
     public SQLDatabase(ProgressDialog progressDialog) {
         this.progressDialog = progressDialog;
@@ -106,8 +108,7 @@ public class SQLDatabase implements Runnable {
                 se.printStackTrace();
             }//end finally try
         }//end try
-        Log.d("SQL: ","Goodbye!");
-        progressDialog.setProgress(progressDialog.getMax());
+        Log.d("SQL: ", "Goodbye!");
         progressDialog.dismiss();
 
 //        try {

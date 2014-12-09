@@ -45,9 +45,9 @@ public class MainActivity extends TabActivity {
 
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Updating Events");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMax(100);
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         Thread thread = new Thread(new SQLDatabase(progressDialog));
