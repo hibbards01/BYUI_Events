@@ -32,5 +32,6 @@
     <string name="reception_public">Reception/Openhouse, Public</string>
     <string name="theatre">Theatre Production</string>
     <string name="clearFilter">Clear Filters</string>
+    <string name="picture">Picture</string>
 
 </resources>

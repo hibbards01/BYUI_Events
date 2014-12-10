@@ -167,8 +167,8 @@ public class Database extends SQLiteOpenHelper {
                 byte [] image = cursor.getBlob(cursor.getColumnIndex("picture"));
 
                 //now combine them!
-                title = name + "\n\n" + dateText + "   "
-                        + timeFormat(start_time) + "-" + timeFormat(end_time) + "\n";
+                title = name + "\n"
+                        + timeFormat(start_time) + "-" + timeFormat(end_time);
 
                 child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
 
@@ -210,6 +210,15 @@ public class Database extends SQLiteOpenHelper {
         }
 
         return time;
+    }
+
+    public String formatDate(String dateText) {
+        //split the date!
+
+        //change the format the DATETEXT
+        String date = null;
+
+        return date;
     }
 
     /**

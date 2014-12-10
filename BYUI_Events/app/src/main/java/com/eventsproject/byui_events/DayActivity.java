@@ -44,13 +44,13 @@ public class DayActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_day);
+        setContentView(R.layout.activity_day);
 
         Log.d("DEBUG: ", "1");
 
         Date date = new Date();
         expListView = (ExpandableListView) findViewById(R.id.dayList);
-        //dateView = (TextView) findViewById(R.id.dayDate);
+        dateView = (TextView) findViewById(R.id.dayDate);
 
         Log.d("DEBUG: ", "2");
 
@@ -64,17 +64,16 @@ public class DayActivity extends Activity {
 
         //and grab the date so it can be at the title!
         textDate = dateFormat(textDate);
-        //dateView.setText(textDate);
+        dateView.setText(textDate);
 
         Log.d("DEBUG: ", "4");
         //now to put it on the screen!
         listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images);
-//        LinearLayout.LayoutParams params =
-//                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//        expListView.setLayoutParams(params);
 
         Log.d("DEBUG: ", "5");
         //now set it to the screen!
+//        expListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+//                LinearLayout.LayoutParams.WRAP_CONTENT));
         expListView.setAdapter(listAdapter);
     }
 
@@ -101,6 +100,8 @@ public class DayActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        //now create a listener for the list!
    }
 
 
