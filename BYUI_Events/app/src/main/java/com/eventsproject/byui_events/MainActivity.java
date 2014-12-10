@@ -3,6 +3,7 @@ package com.eventsproject.byui_events;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,58 +44,9 @@ public class MainActivity extends TabActivity {
         Database database = Database.newInstance(this);
         db = Database.getInstance();
 
-        ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Updating Events");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        DatabaseAsyncTask asyncTask = new DatabaseAsyncTask(this);
 
-        Thread thread = new Thread(new SQLDatabase(progressDialog));
-        thread.start();
-
-        //create tabs!
-
-        TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
-
-        TabHost.TabSpec tab1 = tabHost.newTabSpec("DayTab");
-        TabHost.TabSpec tab2 = tabHost.newTabSpec("WeekTab");
-        TabHost.TabSpec tab3 = tabHost.newTabSpec("MonthTab");
-        TabHost.TabSpec tab4 = tabHost.newTabSpec("MyEventsTab");
-
-        //set up tab name and activity
-        tab1.setIndicator("Day");
-        tab1.setContent(new Intent(this, DayActivity.class));
-
-        tab2.setIndicator("Week");
-        tab2.setContent(new Intent(this, WeekActivity.class));
-
-        tab3.setIndicator("Month");
-        tab3.setContent(new Intent(this, MonthActivity.class));
-
-        tab4.setIndicator("My Events");
-        tab4.setContent(new Intent(this, MyEventsActivity.class));
-
-        //now add to the host!
-        tabHost.addTab(tab1);
-        tabHost.addTab(tab2);
-        tabHost.addTab(tab3);
-        tabHost.addTab(tab4);
-
-        //now change the indicator color!
-        for(int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
-            TextView textView = (TextView)tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
-            textView.setTextColor(getResources().getColor(R.color.white));
-            textView.setTextSize(15);
-        }
-
-        tabHost.setCurrentTab(1);
-
-        /*if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
-        }*/
+        asyncTask.execute(dataBaseHome);
     }
 
     /**
