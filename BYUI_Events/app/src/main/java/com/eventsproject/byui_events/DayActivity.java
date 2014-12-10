@@ -1,11 +1,13 @@
 package com.eventsproject.byui_events;
 
 import android.app.Activity;
+import android.app.ExpandableListActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -42,11 +44,15 @@ public class DayActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_day);
+        //setContentView(R.layout.activity_day);
+
+        Log.d("DEBUG: ", "1");
 
         Date date = new Date();
         expListView = (ExpandableListView) findViewById(R.id.dayList);
-        dateView = (TextView) findViewById(R.id.dayDate);
+        //dateView = (TextView) findViewById(R.id.dayDate);
+
+        Log.d("DEBUG: ", "2");
 
         //grab the date!
         String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
@@ -54,13 +60,20 @@ public class DayActivity extends Activity {
         //now grab from the database!
         database.selectEvents(textDate, headerList, childList, images);
 
+        Log.d("DEBUG: ", "3");
+
         //and grab the date so it can be at the title!
         textDate = dateFormat(textDate);
-        dateView.setText(textDate);
+        //dateView.setText(textDate);
 
+        Log.d("DEBUG: ", "4");
         //now to put it on the screen!
         listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images);
+//        LinearLayout.LayoutParams params =
+//                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//        expListView.setLayoutParams(params);
 
+        Log.d("DEBUG: ", "5");
         //now set it to the screen!
         expListView.setAdapter(listAdapter);
     }

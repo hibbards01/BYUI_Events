@@ -69,8 +69,10 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
         //now put it into the view!
         if (view == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+
+            //(LayoutInflater) context
+//                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             //now convert it!
             view = layoutInflater.inflate(R.layout.list_child_view, null);
@@ -81,21 +83,21 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
         TextView childView = (TextView) view.findViewById(R.id.list_child_view);
 
         //check to make sure there is something there!
-        if (image != null && image.length > 0) {
-            Log.d("Image: ", Integer.toString(image.length));
-            ImageView imageView = (ImageView) view.findViewById(R.id.image_view);
-
-            //convert the bytes to an image!
-            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-
-            if (imageView != null) {
-                //now set the image!
-                Log.d("Bitmap:", bitmap.toString());
-                imageView.setImageBitmap(bitmap);
-            } else {
-                Log.d("IMAGEVIEW", "NULL");
-            }
-        }
+//        if (image != null && image.length > 0) {
+//            Log.d("Image: ", Integer.toString(image.length));
+//            ImageView imageView = (ImageView) view.findViewById(R.id.image_view);
+//
+//            //convert the bytes to an image!
+//            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+//
+//            if (imageView != null) {
+//                //now set the image!
+//                Log.d("Bitmap:", bitmap.toString());
+//                imageView.setImageBitmap(bitmap);
+//            } else {
+//                Log.d("IMAGEVIEW", "NULL");
+//            }
+//        }
 
         //now set the text!
         childView.setText(childText);
@@ -120,8 +122,9 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
         //check the VIEW to see if it is null
         if (view == null) {
-            LayoutInflater layoutInflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = LayoutInflater.from(context);
+//            LayoutInflater layoutInflater = (LayoutInflater) context
+//                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             //now convert it!
             view = layoutInflater.inflate(R.layout.list_view, null);

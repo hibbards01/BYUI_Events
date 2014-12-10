@@ -85,7 +85,7 @@ public class MainActivity extends TabActivity {
         for(int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
             TextView textView = (TextView)tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
             textView.setTextColor(getResources().getColor(R.color.white));
-            textView.setTextSize(10);
+            textView.setTextSize(15);
         }
 
         tabHost.setCurrentTab(1);

@@ -106,7 +106,7 @@ public class Database extends SQLiteOpenHelper {
      */
     public void insertEvent(String [] textDate, byte [] pic) {
         Log.d("SQL: ", "Adding to database!");
-        Log.d("SQL:Image", Integer.toString(pic.length));
+        //Log.d("SQL:Image", Integer.toString(pic.length));
         //grab the database!
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
