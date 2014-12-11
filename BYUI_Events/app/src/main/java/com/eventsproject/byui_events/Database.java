@@ -132,18 +132,26 @@ public class Database extends SQLiteOpenHelper {
     /**
      * SELECTEVENTS
      *  Select the events based on the day!
-     * @param date
+     * @param startDate
+     * @param endDate
      * @param header
      * @param childs
      */
-    public void selectEvents(String date, List<String> header, Map<String, String> childs,
+    public void selectEvents(String startDate, String endDate, List<String> header, Map<String, String> childs,
                              List<byte[]> images) {
         //grab the database!
         SQLiteDatabase db = this.getReadableDatabase();
 
         //create select statment!
-        Cursor cursor = db.rawQuery("SELECT * FROM event WHERE date = '"
-                                    + date + "'", null);
+        Cursor cursor;
+
+        if (startDate.equals(endDate)) {
+            cursor = db.rawQuery("SELECT * FROM event WHERE date = '"
+                    + startDate + "'", null);
+        } else {
+            cursor = db.rawQuery("SELECT * FROM event WHERE date BETWEEN '"
+                    + startDate + "' AND '" + endDate + "'", null);
+        }
 
         //now check to make sure there is something there!
         if (cursor != null && cursor.getCount() > 0) {
@@ -182,7 +190,7 @@ public class Database extends SQLiteOpenHelper {
             }
         } else {
             //display that no events are happening on this date!
-            header.add(0, "No events today");
+            header.add(0, "No events found");
         }
 
         //remember to close it!

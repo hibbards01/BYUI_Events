@@ -157,7 +157,11 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
      * @return
      */
     public byte[] getImage(int groupPosition) {
-        return images.get(groupPosition);
+        if (images.size() > 0) {
+            return images.get(groupPosition);
+        }
+
+        return null;
     }
 
     /**

@@ -25,7 +25,7 @@ public class DayActivity extends Activity {
      * MEMBER VARIABLES
      */
     private List<String> headerList = new ArrayList<String>();
-    private HashMap<String, String> childList = new HashMap<String, String>();
+    private Map<String, String> childList = new HashMap<String, String>();
     private List<byte[]> images = new ArrayList<byte[]>();
     private ExpandableListViewAdapter listAdapter;
     private ExpandableListView expListView;
@@ -58,7 +58,7 @@ public class DayActivity extends Activity {
         String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
         //now grab from the database!
-        database.selectEvents(textDate, headerList, childList, images);
+        database.selectEvents(textDate, textDate, headerList, childList, images);
 
         Log.d("DEBUG: ", "3");
 
