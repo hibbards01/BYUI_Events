@@ -132,18 +132,25 @@ public class Database extends SQLiteOpenHelper {
     /**
      * SELECTEVENTS
      *  Select the events based on the day!
-     * @param date
+     * @param startDate
+     * @param endDate
      * @param header
      * @param childs
      */
-    public void selectEvents(String date, List<String> header, Map<String, String> childs,
-                             List<byte[]> images) {
+    public void selectEvents(String startDate, String endDate, List<String> header, Map<String, String> childs,
+                             List<byte[]> images, Map<String, String[]> dateList) {
         //grab the database!
         SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = null;
 
         //create select statment!
-        Cursor cursor = db.rawQuery("SELECT * FROM event WHERE date = '"
-                                    + date + "'", null);
+        if (startDate.equals(endDate)) {
+            cursor = db.rawQuery("SELECT * FROM event WHERE date = '"
+                    + startDate + "'", null);
+        } else {
+            cursor = db.rawQuery("SELECT * FROM event WHERE date BETWEEN '"
+                                + startDate + "' AND '" + endDate + "'", null);
+        }
 
         //now check to make sure there is something there!
         if (cursor != null && cursor.getCount() > 0) {
@@ -167,15 +174,19 @@ public class Database extends SQLiteOpenHelper {
                 byte [] image = cursor.getBlob(cursor.getColumnIndex("picture"));
 
                 //now combine them!
-                title = name + "\n"
-                        + timeFormat(start_time) + "-" + timeFormat(end_time);
+                title = name;
+                String [] date = {dateText, timeFormat(start_time) + "-" + timeFormat(end_time)};
+
+                //this variable is only to make sure the maps have a unique key.
+                String event = dateText + " " + start_time + " " + end_time;
 
                 child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
 
                 //now insert them into the lists and map!
                 header.add(index, title);
-                childs.put(title, child);
+                childs.put(event, child);
                 images.add(index++, image);
+                dateList.put(event, date);
 
                 //now move forward by one..
                 cursor.moveToNext();

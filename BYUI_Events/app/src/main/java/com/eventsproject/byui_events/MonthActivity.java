@@ -1,32 +1,134 @@
 package com.eventsproject.byui_events;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.TextView;
 
-public class MonthActivity extends ListActivity {
+import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+
+public class MonthActivity extends Activity {
+    /*
+     * MEMBER VARIABLES
+     */
+    private ExpandableListViewAdapter listAdapter = null;
+    private ExpandableListView expListView;
+    private TextView monthView;
+    private Database database = Database.getInstance();
+    //private GestureDetector gd;
+    private Date date;
+
+    /*
+     * MEMBER METHDOS
+     */
+
+    /**
+     * ONCREATE
+     *  Create the activity!
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_month);
 
-        String [] list = new String[] {
-                "Linux Meeting", "Career Fair", "I-Connect", "Game Night",
-                "Theater", "Stem Fair", "Basketball", "Baseball", "Softball",
-                "Ping Pong", "Racket ball", "Car Show", "English", "Math",
-                "Red Hat", "Jumping Ropes"
-        };
+        //create new list and textview!
+        expListView = (ExpandableListView) findViewById(R.id.monthList);
+        monthView = (TextView) findViewById(R.id.monthView);
+        date = new Date();
 
-        //now to put it on the screen!
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.activity_month,
-                R.id.label, list);
-        setListAdapter(adapter);
+        //now set the adapter!
+        setAdapter();
     }
 
-    @Override
-    public void onListItemClick(ListView list, View v, int position, long id) {
+    /**
+     * SETADAPTER
+     */
+    public void setAdapter() {
+        //grab the date!
+        String startDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        String endDate = grabEndDate(startDate);
 
+        //create the lists!
+        List<String> headerList = new ArrayList<String>();
+        HashMap<String, String> childList = new HashMap<String, String>();
+        List<byte[]> images = new ArrayList<byte[]>();
+
+        //now grab from the database!
+        database.selectEvents(startDate, endDate, headerList, childList, images);
+
+        //and grab the date so it can be at the title!
+        String textDate = dateFormat(startDate);
+        monthView.setText(textDate);
+
+        //now to put it on the screen!
+        if (listAdapter == null) {
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images);
+        } else {
+            listAdapter.setLists(headerList, childList, images);
+        }
+
+        //now set it to the screen!
+        expListView.setAdapter(listAdapter);
+    }
+
+    /**
+     * DATEFORMAT
+     *  Format the date.
+     * @param date
+     * @return
+     */
+    public String dateFormat(String date) {
+        //split the string!
+        String [] splitDate = date.split("-");
+        String [] month = {
+                "none", "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+        };
+
+        String text = month[Integer.parseInt(splitDate[1])] + " " + splitDate[0];
+
+        return text;
+    }
+
+    /**
+     * GRABENDDATE
+     *  Grab the month end date.
+     * @param startDate
+     * @return
+     */
+    public String grabEndDate(String startDate) {
+        //make some variables
+        String endDate;
+        String [] splitDate = startDate.split("-");
+
+        //grab the year, month, and day
+        int year = Integer.parseInt(splitDate[0]);
+        int month = Integer.parseInt(splitDate[1]) - 1;
+        int day = Integer.parseInt(splitDate[2]);
+
+        //now grab the calendar!
+        Calendar calendar = new GregorianCalendar(year, month, day);
+        int totalDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        //now put it back into a String
+        endDate = splitDate[0] + "-" + splitDate[1] + "-" + Integer.toString(totalDays);
+
+        Log.d("EndDate: ", endDate);
+
+        return endDate;
     }
 }

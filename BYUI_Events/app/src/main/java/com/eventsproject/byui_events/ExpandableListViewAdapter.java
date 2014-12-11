@@ -30,6 +30,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     private List<String> titleList;
     private Map<String, String> childList;
     private List<byte[]> images;
+    private Map<String, String[]> dateList;
     private LayoutInflater inflater;
 
     /*
@@ -44,18 +45,30 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
      * @param childList
      */
     public ExpandableListViewAdapter(Activity activity, List<String> list,
-                                     Map<String, String> childList, List<byte[]> images) {
+                                     Map<String, String> childList,
+                                     List<byte[]> images,
+                                     Map<String, String[]> dateList) {
         this.titleList = list;
         this.childList = childList;
         this.images = images;
+        this.dateList = dateList;
         inflater = activity.getLayoutInflater();
-        //Log.d("SQL_images_size: ", Integer.toString(images.size()));
     }
 
-    public void setLists(List<String> list, Map<String, String> childList, List<byte[]> images) {
+    /**
+     * SETLISTS
+     *  Set the lists!
+     * @param list
+     * @param childList
+     * @param images
+     * @param dateList
+     */
+    public void setLists(List<String> list, Map<String, String> childList, List<byte[]> images,
+                         Map<String, String[]> dateList) {
         this.titleList = list;
         this.childList = childList;
         this.images = images;
+        this.dateList = dateList;
     }
 
 
@@ -155,6 +168,16 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         return childList.get(titleList.get(groupPosition));
+    }
+
+    /**
+     * GETDATE
+     *  Grab the date!
+     * @param groupPosition
+     * @return
+     */
+    public String[] getDate(int groupPosition) {
+        return dateList.get(groupPosition);
     }
 
     /**

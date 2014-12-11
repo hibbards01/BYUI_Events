@@ -65,7 +65,7 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
         String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
         //now grab from the database!
-        database.selectEvents(textDate, headerList, childList, images);
+        database.selectEvents(textDate, textDate, headerList, childList, images);
 
         //and grab the date so it can be at the title!
         textDate = dateFormat(textDate);
@@ -170,7 +170,7 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
             images.clear();
 
             //now grab from the database!
-            database.selectEvents(textDate, headerList, childList, images);
+            database.selectEvents(textDate, textDate, headerList, childList, images);
 
             //and grab the date so it can be at the title!
             textDate = dateFormat(textDate);
