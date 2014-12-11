@@ -149,7 +149,8 @@ public class Database extends SQLiteOpenHelper {
                     + startDate + "'", null);
         } else {
             cursor = db.rawQuery("SELECT * FROM event WHERE date BETWEEN '"
-                                + startDate + "' AND '" + endDate + "'", null);
+                                + startDate + "' AND '" + endDate
+                                + "' ORDER BY date(date)", null);
         }
 
         //now check to make sure there is something there!
