@@ -9,6 +9,9 @@ import java.util.ArrayList;
 
 import android.app.ProgressDialog;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Handler;
 import android.util.Base64;
 import android.util.Log;
