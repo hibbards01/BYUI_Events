@@ -24,7 +24,7 @@ public class WeekActivity extends Activity {
 
     private ExpandableListViewAdapter adapter;
     private ExpandableListView list;
-    private DatabaseHelper db = DatabaseHelper.getInstance();
+    private Database db = Database.getInstance();
     private List<String> header = new ArrayList<String>();
     private Map<String, String> childList = new HashMap<String, String>();
     private TextView weekDateView;

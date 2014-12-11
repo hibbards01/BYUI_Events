@@ -52,6 +52,13 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
         //Log.d("SQL_images_size: ", Integer.toString(images.size()));
     }
 
+    public void setLists(List<String> list, Map<String, String> childList, List<byte[]> images) {
+        this.titleList = list;
+        this.childList = childList;
+        this.images = images;
+    }
+
+
     /**
      * GETCHILDVIEW
      *  Grab the child of the certain list_view.
@@ -157,7 +164,11 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
      * @return
      */
     public byte[] getImage(int groupPosition) {
-        return images.get(groupPosition);
+        if (images.size() > 0) {
+            return images.get(groupPosition);
+        }
+
+        return null;
     }
 
     /**
