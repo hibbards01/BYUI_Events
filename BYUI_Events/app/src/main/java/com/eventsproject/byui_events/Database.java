@@ -174,16 +174,17 @@ public class Database extends SQLiteOpenHelper {
                 byte [] image = cursor.getBlob(cursor.getColumnIndex("picture"));
 
                 //now combine them!
-                title = name;
-                String [] date = {dateText, timeFormat(start_time) + "-" + timeFormat(end_time)};
+                String [] date = {dateText, (timeFormat(start_time) + "-" + timeFormat(end_time))};
+
+                Log.d("DATE = ", date[0] + " " + date[1]);
 
                 //this variable is only to make sure the maps have a unique key.
-                String event = dateText + " " + start_time + " " + end_time;
+                String event = name + "~" + dateText + " " + start_time;
 
                 child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
 
                 //now insert them into the lists and map!
-                header.add(index, title);
+                header.add(index, event);
                 childs.put(event, child);
                 images.add(index++, image);
                 dateList.put(event, date);

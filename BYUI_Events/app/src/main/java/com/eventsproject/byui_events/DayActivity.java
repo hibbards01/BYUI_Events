@@ -32,6 +32,7 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
     private List<String> headerList = new ArrayList<String>();
     private Map<String, String> childList = new HashMap<String, String>();
     private List<byte[]> images = new ArrayList<byte[]>();
+    private Map<String, String[]> dateList = new HashMap<String, String[]>();
     private ExpandableListViewAdapter listAdapter;
     private ExpandableListView expListView;
     private TextView dateView;
@@ -65,14 +66,14 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
         String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
         //now grab from the database!
-        database.selectEvents(textDate, textDate, headerList, childList, images);
+        database.selectEvents(textDate, textDate, headerList, childList, images, dateList);
 
         //and grab the date so it can be at the title!
         textDate = dateFormat(textDate);
         dateView.setText(textDate);
 
         //now to put it on the screen!
-        listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images);
+        listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "DAY");
 
         //now set it to the screen!
 //        expListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -170,14 +171,14 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
             images.clear();
 
             //now grab from the database!
-            database.selectEvents(textDate, textDate, headerList, childList, images);
+            database.selectEvents(textDate, textDate, headerList, childList, images, dateList);
 
             //and grab the date so it can be at the title!
             textDate = dateFormat(textDate);
             dateView.setText(textDate);
 
             //now to put it on the screen!
-            listAdapter.setLists(headerList, childList, images);
+            listAdapter.setLists(headerList, childList, images, dateList);
 
             //now set it to the screen!
             expListView.setAdapter(listAdapter);

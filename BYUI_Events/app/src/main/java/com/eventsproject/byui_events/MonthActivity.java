@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MonthActivity extends Activity {
     /*
@@ -66,9 +67,10 @@ public class MonthActivity extends Activity {
         List<String> headerList = new ArrayList<String>();
         HashMap<String, String> childList = new HashMap<String, String>();
         List<byte[]> images = new ArrayList<byte[]>();
+        Map<String, String[]> dateList = new HashMap<String, String[]>();
 
         //now grab from the database!
-        database.selectEvents(startDate, endDate, headerList, childList, images);
+        database.selectEvents(startDate, endDate, headerList, childList, images, dateList);
 
         //and grab the date so it can be at the title!
         String textDate = dateFormat(startDate);
@@ -76,9 +78,9 @@ public class MonthActivity extends Activity {
 
         //now to put it on the screen!
         if (listAdapter == null) {
-            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images);
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "MONTH");
         } else {
-            listAdapter.setLists(headerList, childList, images);
+            listAdapter.setLists(headerList, childList, images, dateList);
         }
 
         //now set it to the screen!

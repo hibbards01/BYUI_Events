@@ -32,6 +32,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     private List<byte[]> images;
     private Map<String, String[]> dateList;
     private LayoutInflater inflater;
+    private String activity;
 
     /*
      * MEMBER METHODS
@@ -47,12 +48,14 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     public ExpandableListViewAdapter(Activity activity, List<String> list,
                                      Map<String, String> childList,
                                      List<byte[]> images,
-                                     Map<String, String[]> dateList) {
+                                     Map<String, String[]> dateList,
+                                     String type) {
         this.titleList = list;
         this.childList = childList;
         this.images = images;
         this.dateList = dateList;
         inflater = activity.getLayoutInflater();
+        this.activity = type;
     }
 
     /**
@@ -121,6 +124,30 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
                              ViewGroup parent) {
         //grab the title!
         String title = (String) getGroup(groupPosition);
+        //and parse it correctly!
+        String [] split = title.split("~");
+        title = split[0];
+
+        //now grab the date!
+        String [] date = getDate(groupPosition);
+//        if (date == null) {
+//            Log.d(activity + ": ", "NULL!!!\n");
+//            for (Map.Entry<String, String[]> index : dateList.entrySet()) {
+//                Log.d("Key = ", index.getKey());
+//            }
+//        } else {
+//            Log.d(activity + ": ", Integer.toString(date.length));
+//            Log.d("Date = ", date[0] + " " + date[1]);
+//        }
+
+        //grab the date!
+        if (activity.equals("DAY")) {
+            title = title + "\n" + date[1];
+        } else {
+            //split the date into just month and day!
+            String [] splitDate = date[0].split("-");
+            title = title + "\n" + splitDate[1] + "/" + splitDate[2] + " " + date[1];
+        }
 
         //check the VIEW to see if it is null
         if (view == null) {
@@ -135,7 +162,6 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
         //check to make sure there is something there!
         byte[] image = getImage(groupPosition);
         if (image != null && image.length > 0) {
-            Log.d("Image: ", Integer.toString(image.length));
             ImageView imageView = (ImageView) view.findViewById(R.id.image_view);
 
             //convert the bytes to an image!
@@ -143,7 +169,6 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
             if (imageView != null) {
                 //now set the image!
-                Log.d("Bitmap:", bitmap.toString());
                 imageView.setImageBitmap(bitmap);
             } else {
                 Log.d("IMAGEVIEW", "NULL");
@@ -177,7 +202,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
      * @return
      */
     public String[] getDate(int groupPosition) {
-        return dateList.get(groupPosition);
+        return dateList.get(titleList.get(groupPosition));
     }
 
     /**

@@ -19,6 +19,7 @@ public class WeekActivity extends Activity {
     private List<String> headerList = new ArrayList<String>();
     private Map<String, String> childList = new HashMap<String, String>();
     private List<byte[]> images = new ArrayList<byte[]>();
+    private Map<String, String[]> dateList = new HashMap<String, String[]>();
     private ExpandableListViewAdapter listAdapter;
     private ExpandableListView expListView;
     private TextView weekDateView;
@@ -53,7 +54,7 @@ public class WeekActivity extends Activity {
         String stringEndDate = new SimpleDateFormat("yyy-MM-dd").format(endDate);
 
         // Select the events that fall under this time period
-        database.selectEvents(stringStartDate, stringEndDate, headerList, childList, images);
+        database.selectEvents(stringStartDate, stringEndDate, headerList, childList, images, dateList);
 
         // Set the start and end dates as the title
         stringStartDate = dateFormat(stringStartDate);
@@ -61,7 +62,7 @@ public class WeekActivity extends Activity {
         weekDateView.setText(stringStartDate + " to " + stringEndDate);
 
         // Now to put it on the screen!
-        listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images);
+        listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "WEEK");
 
         // Now set it to the screen!
         expListView.setAdapter(listAdapter);
@@ -72,8 +73,8 @@ public class WeekActivity extends Activity {
         String date = "";
         String [] splitDate = textDate.split("-");
         String [] month = {
-                "none", "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
+                "none", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         };
 
         date = month[Integer.parseInt(splitDate[1])] + " " + splitDate[2] + " " + splitDate[0];
