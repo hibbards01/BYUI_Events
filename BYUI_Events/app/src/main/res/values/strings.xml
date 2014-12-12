@@ -33,5 +33,6 @@
     <string name="theatre">Theatre Production</string>
     <string name="clearFilter">Clear Filters</string>
     <string name="picture">Picture</string>
+    <string name="save">Save</string>
 
 </resources>

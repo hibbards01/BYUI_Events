@@ -29,11 +29,7 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
     /*
      * MEMBER VARIABLES
      */
-    private List<String> headerList = new ArrayList<String>();
-    private Map<String, String> childList = new HashMap<String, String>();
-    private List<byte[]> images = new ArrayList<byte[]>();
-    private Map<String, String[]> dateList = new HashMap<String, String[]>();
-    private ExpandableListViewAdapter listAdapter;
+    private ExpandableListViewAdapter listAdapter = null;
     private ExpandableListView expListView;
     private TextView dateView;
     private Database database = Database.getInstance();
@@ -62,8 +58,21 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
         expListView = (ExpandableListView) findViewById(R.id.dayList);
         dateView = (TextView) findViewById(R.id.dayDate);
 
+        setAdapter();
+    }
+
+    /**
+     * SETADAPTER
+     */
+    private void setAdapter() {
         //grab the date!
         String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
+        //create the lists!
+        List<String> headerList = new ArrayList<String>();
+        Map<String, String> childList = new HashMap<String, String>();
+        List<byte[]> images = new ArrayList<byte[]>();
+        Map<String, String[]> dateList = new HashMap<String, String[]>();
 
         //now grab from the database!
         database.selectEvents(textDate, textDate, headerList, childList, images, dateList);
@@ -73,11 +82,13 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
         dateView.setText(textDate);
 
         //now to put it on the screen!
-        listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "DAY");
+        if (listAdapter == null) {
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "DAY");
+        } else {
+            listAdapter.setLists(headerList, childList, images, dateList);
+        }
 
         //now set it to the screen!
-//        expListView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT));
         expListView.setAdapter(listAdapter);
     }
 
@@ -165,23 +176,8 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
             //grab the date!
             String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-            //erase everything from the old lists!
-            headerList.clear();
-            childList.clear();
-            images.clear();
-
-            //now grab from the database!
-            database.selectEvents(textDate, textDate, headerList, childList, images, dateList);
-
-            //and grab the date so it can be at the title!
-            textDate = dateFormat(textDate);
-            dateView.setText(textDate);
-
-            //now to put it on the screen!
-            listAdapter.setLists(headerList, childList, images, dateList);
-
-            //now set it to the screen!
-            expListView.setAdapter(listAdapter);
+            //set the adapter!
+            setAdapter();
 
             return true;
         }

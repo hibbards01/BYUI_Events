@@ -39,8 +39,8 @@ public class SQLDatabase {
     private static final String LINK_PHP = "http://157.201.194.254/~gshawm/JAVA/databaseSelect.php";
 
     //  Database credentials
-    private static final String USER = "sam";
-    private static final String PASS = "hibbard";
+    private static final String USER = "byui";
+    private static final String PASS = "byui";
 
     //grab the database!
     private Database database = Database.getInstance();

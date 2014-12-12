@@ -6,11 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.media.Image;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import org.w3c.dom.Text;
@@ -124,61 +126,54 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
                              ViewGroup parent) {
         //grab the title!
         String title = (String) getGroup(groupPosition);
-        //and parse it correctly!
-        String [] split = title.split("~");
-        title = split[0];
+        String textDate;
 
-        //now grab the date!
-        String [] date = getDate(groupPosition);
-//        if (date == null) {
-//            Log.d(activity + ": ", "NULL!!!\n");
-//            for (Map.Entry<String, String[]> index : dateList.entrySet()) {
-//                Log.d("Key = ", index.getKey());
-//            }
-//        } else {
-//            Log.d(activity + ": ", Integer.toString(date.length));
-//            Log.d("Date = ", date[0] + " " + date[1]);
-//        }
-
-        //grab the date!
-        if (activity.equals("DAY")) {
-            title = title + "\n" + date[1];
-        } else {
-            //split the date into just month and day!
-            String [] splitDate = date[0].split("-");
-            title = title + "\n" + splitDate[1] + "/" + splitDate[2] + " " + date[1];
-        }
-
-        //check the VIEW to see if it is null
+        //inflate the view if null!
         if (view == null) {
-//            LayoutInflater layoutInflater = LayoutInflater.from(context);
-//            LayoutInflater layoutInflater = (LayoutInflater) context
-//                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
             //now convert it!
             view = inflater.inflate(R.layout.list_view, null);
         }
+        TextView titleView = (TextView) view.findViewById(R.id.list_view);
 
-        //check to make sure there is something there!
-        byte[] image = getImage(groupPosition);
-        if (image != null && image.length > 0) {
+
+        //and parse string correctly!
+        String[] split = title.split("~");
+
+        if (split.length > 1) {
+            title = split[1];
+            //now grab the date!
+            String[] date = getDate(groupPosition);
+
+            //grab the date!
+            if (activity.equals("DAY")) {
+                textDate = date[1];
+
+            } else {
+                //split the date into just month and day!
+                String[] splitDate = date[0].split("-");
+                textDate = splitDate[1] + "/" + splitDate[2] + " " + date[1];
+            }
+
+            //check to make sure there is something there!
+            byte[] image = getImage(groupPosition);
+
             ImageView imageView = (ImageView) view.findViewById(R.id.image_view);
 
             //convert the bytes to an image!
-            Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+            if (image != null) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
 
-            if (imageView != null) {
                 //now set the image!
                 imageView.setImageBitmap(bitmap);
             } else {
-                Log.d("IMAGEVIEW", "NULL");
+                imageView.setImageDrawable(null);
             }
-        }
 
-        //now add the title text!
-        TextView titleView = (TextView) view.findViewById(R.id.list_view);
-        titleView.setTypeface(null, Typeface.BOLD);
-        titleView.setText(title);
+            //now add the title text!
+            titleView.setText(Html.fromHtml("<b>" + title + "</b><br />" + textDate));
+        } else {
+            titleView.setText("No events saved");
+        }
 
         return view;
     }

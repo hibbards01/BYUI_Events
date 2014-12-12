@@ -58,7 +58,7 @@ public class MonthActivity extends Activity {
     /**
      * SETADAPTER
      */
-    public void setAdapter() {
+    private void setAdapter() {
         //grab the date!
         String startDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
         String endDate = grabEndDate(startDate);

@@ -39,6 +39,18 @@ public class Database extends SQLiteOpenHelper {
                     + ", location    TEXT"
                     + ", picture     BLOB)";
 
+    private static final String SQL_CREATE_MY_EVENTS_TABLE =
+            "CREATE TABLE IF NOT EXISTS my_events"
+                    + "( event_id    INTEGER  NOT NULL"
+                    + ", name        TEXT     NOT NULL"
+                    + ", date        TEXT"
+                    + ", start_time  TEXT"
+                    + ", end_time    TEXT"
+                    + ", description TEXT"
+                    + ", category    TEXT"
+                    + ", location    TEXT"
+                    + ", picture     BLOB)";
+
     /*
      * MEMBER METHODS
      */
@@ -52,6 +64,7 @@ public class Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //create table!
         db.execSQL(SQL_CREATE_EVENT_TABLE);
+        db.execSQL(SQL_CREATE_MY_EVENTS_TABLE);
     }
 
     /**
@@ -100,9 +113,133 @@ public class Database extends SQLiteOpenHelper {
     }
 
     /**
+     * INSERTMYEVENTS
+     *  Insert the event into the myevents table!
+     * @param header
+     */
+    public void insertMyEvents(String header) {
+        //grab the read and write databases!
+        SQLiteDatabase read = this.getReadableDatabase();
+
+        //now grab the right things to select the data!
+        String [] splitHeader = header.split("~");
+        String event_id = splitHeader[0];
+
+        //grab the event!
+        Cursor cursor = read.rawQuery("SELECT * FROM event WHERE event_id = '"
+                                     + event_id + "'", null);
+
+        //grab the data... should be able to...
+        if (cursor != null && cursor.getCount() > 0) {
+            //go to the first element in the list!
+            cursor.moveToFirst();
+
+            //and grab everything!
+            String eventId = cursor.getString(cursor.getColumnIndex("event_id"));
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String dateText = cursor.getString(cursor.getColumnIndex("date"));
+            String start_time = cursor.getString(cursor.getColumnIndex("start_time"));
+            String end_time = cursor.getString(cursor.getColumnIndex("end_time"));
+            String description = cursor.getString(cursor.getColumnIndex("description"));
+            String category = cursor.getString(cursor.getColumnIndex("category"));
+            String location = cursor.getString(cursor.getColumnIndex("location"));
+            byte [] image = cursor.getBlob(cursor.getColumnIndex("picture"));
+
+            //now insert into the database!
+            SQLiteDatabase write = this.getWritableDatabase();
+
+            //put the values into the content!
+            ContentValues values = new ContentValues();
+            values.put("event_id", eventId);
+            values.put("name", name);
+            values.put("date", dateText);
+            values.put("start_time", start_time);
+            values.put("end_time", end_time);
+            values.put("description", description);
+            values.put("category", category);
+            values.put("location", location);
+            values.put("picture", image);
+
+            //now insert it!
+            write.insert("my_events", null, values);
+            write.close();
+        }
+
+        read.close();
+    }
+
+    /**
+     * SELECTALLMY_EVENTS
+     *  This will select all the events from My_Events
+     *      table.
+     * @param header
+     * @param childs
+     * @param images
+     * @param dateList
+     */
+    public void selectAllMy_Events(List<String> header, Map<String, String> childs,
+                                   List<byte[]> images, Map<String, String[]> dateList) {
+        //now gab all the events!
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM my_events",null);
+
+        Log.d("SELECT MY_EVENTS: ", "THIS should be null");
+
+        //now check to make sure there is something there!
+        if (cursor != null && cursor.getCount() > 0) {
+            //go to the first element in the list!
+            cursor.moveToFirst();
+
+            //and make some variables...
+            String child;
+            int index = 0;
+
+            //now loop thru all the events and grab them!
+            for (int i = 0; i < cursor.getCount(); i++) {
+                String event_id = cursor.getString(cursor.getColumnIndex("event_id"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                String dateText = cursor.getString(cursor.getColumnIndex("date"));
+                String start_time = cursor.getString(cursor.getColumnIndex("start_time"));
+                String end_time = cursor.getString(cursor.getColumnIndex("end_time"));
+                String description = cursor.getString(cursor.getColumnIndex("description"));
+                String category = cursor.getString(cursor.getColumnIndex("category"));
+                String location = cursor.getString(cursor.getColumnIndex("location"));
+                byte [] image = cursor.getBlob(cursor.getColumnIndex("picture"));
+
+                //now combine them!
+                String [] date = {dateText, (timeFormat(start_time) + "-" + timeFormat(end_time))};
+
+                //this variable is only to make sure the maps have a unique key.
+                String event = event_id + "~" + name;
+
+                Log.d("EVENT = ", event);
+
+                child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
+
+                //now insert them into the lists and map!
+                header.add(index, event);
+                childs.put(event, child);
+                images.add(index++, image);
+                dateList.put(event, date);
+
+                //now move forward by one..
+                cursor.moveToNext();
+            }
+        } else {
+            //display that no events are happening on this date!
+            Log.d("DEBUG1: ", "No events saved!");
+        }
+
+        //remember to close it!
+        cursor.close();
+        db.close();
+    }
+
+    /**
      * INSERTEVENT
      *  Add an event to the table!
      * @param textDate
+     * @param pic
      */
     public void insertEvent(String [] textDate, byte [] pic) {
         Log.d("SQL: ", "Adding to database!");
@@ -136,6 +273,8 @@ public class Database extends SQLiteOpenHelper {
      * @param endDate
      * @param header
      * @param childs
+     * @param images
+     * @param dateList
      */
     public void selectEvents(String startDate, String endDate, List<String> header, Map<String, String> childs,
                              List<byte[]> images, Map<String, String[]> dateList) {
@@ -150,7 +289,7 @@ public class Database extends SQLiteOpenHelper {
         } else {
             cursor = db.rawQuery("SELECT * FROM event WHERE date BETWEEN '"
                                 + startDate + "' AND '" + endDate
-                                + "' ORDER BY date(date)", null);
+                                + "' ORDER BY date(date), start_time", null);
         }
 
         //now check to make sure there is something there!
@@ -165,6 +304,7 @@ public class Database extends SQLiteOpenHelper {
 
             //now loop thru all the events and grab them!
             for (int i = 0; i < cursor.getCount(); i++) {
+                String event_id = cursor.getString(cursor.getColumnIndex("event_id"));
                 String name = cursor.getString(cursor.getColumnIndex("name"));
                 String dateText = cursor.getString(cursor.getColumnIndex("date"));
                 String start_time = cursor.getString(cursor.getColumnIndex("start_time"));
@@ -177,10 +317,10 @@ public class Database extends SQLiteOpenHelper {
                 //now combine them!
                 String [] date = {dateText, (timeFormat(start_time) + "-" + timeFormat(end_time))};
 
-                Log.d("DATE = ", date[0] + " " + date[1]);
-
                 //this variable is only to make sure the maps have a unique key.
-                String event = name + "~" + dateText + " " + start_time;
+                String event = event_id + "~" + name;
+
+                Log.d("EVENT = ", event);
 
                 child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
 
