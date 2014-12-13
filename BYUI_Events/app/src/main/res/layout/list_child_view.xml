@@ -18,7 +18,8 @@
         android:layout_height="wrap_content"
         android:text="@string/save"
         android:textSize="13sp"
-        android:layout_gravity="right" />
+        android:layout_gravity="right"
+        android:id="@+id/button" />
 
 </LinearLayout>
 

@@ -69,6 +69,16 @@ public class MyEventsActivity extends Activity {
         //check the lists!
         if (headerList.size() == 0) {
             dateView.setText("No events saved");
+        } else {
+            String title;
+
+            if (headerList.size() == 1) {
+                title = " Event saved";
+            } else {
+                title = " Events saved";
+            }
+
+            dateView.setText(Integer.toString(headerList.size()) + title);
         }
 
         //now to put it on the screen!
@@ -81,6 +91,38 @@ public class MyEventsActivity extends Activity {
 
         //now set it to the screen!
         expListView.setAdapter(listAdapter);
+    }
+
+    /**
+     * ONSTART
+     *  This will start the activity!
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //now create a listener for the list!
+        //this will only allow one thing to be selected!
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int previousItem = -1;
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (previousItem != groupPosition) {
+                    expListView.collapseGroup(previousItem);
+                    previousItem = groupPosition;
+                }
+            }
+        });
+    }
+
+    /**
+     * ONRESUME
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //check to see if there are any new events saved!
+        setAdapter();
     }
 }
 

@@ -2,6 +2,9 @@ package com.eventsproject.byui_events;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -80,6 +83,28 @@ public class WeekActivity extends Activity {
         date = month[Integer.parseInt(splitDate[1])] + " " + splitDate[2] + " " + splitDate[0];
 
         return date;
+    }
+
+    /**
+     * ONSTART
+     *  This will start the activity!
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //now create a listener for the list!
+        //this will only allow one thing to be selected!
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int previousItem = -1;
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (previousItem != groupPosition) {
+                    expListView.collapseGroup(previousItem);
+                    previousItem = groupPosition;
+                }
+            }
+        });
     }
 }
 

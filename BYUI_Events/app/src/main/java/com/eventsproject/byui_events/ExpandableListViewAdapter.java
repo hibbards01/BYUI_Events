@@ -9,6 +9,7 @@ import android.media.Image;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
@@ -88,7 +89,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
      * @return
      */
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
+    public View getChildView(final int groupPosition, int childPosition, boolean isLastChild,
                              View view, ViewGroup parent) {
         //grab the child text!
         String childText = (String) getChild(groupPosition, childPosition);
@@ -105,6 +106,27 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
         //now add the child text!
         TextView childView = (TextView) view.findViewById(R.id.list_child_view);
+
+        //grab the button!
+        Button button = (Button) view.findViewById(R.id.button);
+
+        //now create a listener!
+        button.setOnClickListener(new Button.OnClickListener() {
+            int num = groupPosition;
+
+            @Override
+            public void onClick(View v) {
+                //now insert the event into my_events!
+                String header = (String) getGroup(num);
+                Log.d("TOUCH EVENT: ", "TOUCHED!");
+
+                //now grab the database!
+                Database database = Database.getInstance();
+
+                //now insert it!
+                database.insertMyEvents(header);
+            }
+        });
 
         //now set the text!
         childView.setText(childText);

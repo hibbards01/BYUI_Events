@@ -132,6 +132,7 @@ public class Database extends SQLiteOpenHelper {
         //grab the data... should be able to...
         if (cursor != null && cursor.getCount() > 0) {
             //go to the first element in the list!
+            Log.d("INSERT_MY_EVENTS: ", "Grabbing event!");
             cursor.moveToFirst();
 
             //and grab everything!
@@ -146,6 +147,7 @@ public class Database extends SQLiteOpenHelper {
             byte [] image = cursor.getBlob(cursor.getColumnIndex("picture"));
 
             //now insert into the database!
+            Log.d("MYEVENTS: ", "Event being saved!");
             SQLiteDatabase write = this.getWritableDatabase();
 
             //put the values into the content!
@@ -211,8 +213,6 @@ public class Database extends SQLiteOpenHelper {
 
                 //this variable is only to make sure the maps have a unique key.
                 String event = event_id + "~" + name;
-
-                Log.d("EVENT = ", event);
 
                 child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
 
@@ -320,8 +320,6 @@ public class Database extends SQLiteOpenHelper {
                 //this variable is only to make sure the maps have a unique key.
                 String event = event_id + "~" + name;
 
-                Log.d("EVENT = ", event);
-
                 child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
 
                 //now insert them into the lists and map!
@@ -381,6 +379,7 @@ public class Database extends SQLiteOpenHelper {
     public void deleteEvents() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("event", null, null);
+        db.delete("my_events", null, null);
         db.close();
     }
 }

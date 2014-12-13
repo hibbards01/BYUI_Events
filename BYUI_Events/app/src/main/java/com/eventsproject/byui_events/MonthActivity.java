@@ -88,6 +88,28 @@ public class MonthActivity extends Activity {
     }
 
     /**
+     * ONSTART
+     *  This will start the activity!
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        //now create a listener for the list!
+        //this will only allow one thing to be selected!
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            int previousItem = -1;
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (previousItem != groupPosition) {
+                    expListView.collapseGroup(previousItem);
+                    previousItem = groupPosition;
+                }
+            }
+        });
+    }
+
+    /**
      * DATEFORMAT
      *  Format the date.
      * @param date
