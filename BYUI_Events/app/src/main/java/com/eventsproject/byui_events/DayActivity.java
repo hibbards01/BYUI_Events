@@ -1,18 +1,11 @@
 package com.eventsproject.byui_events;
 
 import android.app.Activity;
-import android.app.ExpandableListActivity;
-import android.gesture.GestureOverlayView;
 import android.os.Bundle;
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -24,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class DayActivity extends Activity implements GestureDetector.OnGestureListener {
+public class DayActivity extends Activity {
 
     /*
      * MEMBER VARIABLES
@@ -33,7 +26,6 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
     private ExpandableListView expListView;
     private TextView dateView;
     private Database database = Database.getInstance();
-    private GestureDetector gd;
     private Date date;
 
     /*
@@ -49,9 +41,6 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day);
-
-        //create a new gesture!
-        gd = new GestureDetector(this, this);
 
         //grab the date!
         date = new Date();
@@ -103,8 +92,8 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
         String date;
         String [] splitDate = textDate.split("-");
         String [] month = {
-                "none", "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
+                "none", "  Jan", "  Feb", "  Mar", "  Apr", "  May", "  Jun",
+                "  Jul", "  Aug", "  Sep", "  Oct", "  Nov", "  Dec"
         };
 
         date = month[Integer.parseInt(splitDate[1])] + " " + splitDate[2] + " " + splitDate[0];
@@ -132,90 +121,37 @@ public class DayActivity extends Activity implements GestureDetector.OnGestureLi
                 }
             }
         });
+
+        //grab the image buttons!
+        ImageButton back = (ImageButton) findViewById(R.id.day_back_button);
+        ImageButton forward = (ImageButton) findViewById(R.id.day_for_button);
+
+        //grab the dates!
+        final Calendar calendar = Calendar.getInstance();
+
+        //set the time
+        calendar.setTime(date);
+
+        //now create the listeners!
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, -1);
+
+                date = calendar.getTime();
+                setAdapter();
+            }
+        });
+
+        forward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, 1);
+
+                date = calendar.getTime();
+                setAdapter();
+            }
+        });
    }
-
-    /**
-     * ONFLING
-     *  This will catch which way the persons swipes their finger!
-     * @param e1
-     * @param e2
-     * @param velocityX
-     * @param velocityY
-     * @return
-     */
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        //define a sensitivity!
-        Log.d("DAY_ACTIVITY: ", "FLING EVENT!");
-        float sesitivity = 50;
-        boolean dateShifted = false;
-        Calendar calendar = Calendar.getInstance();
-
-        //now check the swipe event!
-        //swipe left!
-        if (e1.getX() - e2.getX() > sesitivity) {
-            //now move the date forward by one!
-            calendar.setTime(date);
-            calendar.add(Calendar.DATE, 1);
-
-            date = calendar.getTime();
-            dateShifted = true;
-        }
-        //swipe right!
-        else if (e2.getX() - e1.getX() > sesitivity) {
-            //move the date back by one!
-            calendar.setTime(date);
-            calendar.add(Calendar.DATE, -1);
-
-            date = calendar.getTime();
-            dateShifted = true;
-        }
-
-        //now grab the events!
-        if (dateShifted) {
-            //grab the date!
-            String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-            //set the adapter!
-            setAdapter();
-
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return gd.onTouchEvent(event);
-    }
-
-    /*************************************************
-     * ALL THESE I HAVE TO IMPLEMENT.
-     ************************************************/
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return true;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
-    }
 }
 

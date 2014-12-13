@@ -109,24 +109,27 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
         //grab the button!
         Button button = (Button) view.findViewById(R.id.button);
+        if (activity != "MYEVENTS" && childList.size() > 0) {
+            //now create a listener!
+            button.setOnClickListener(new Button.OnClickListener() {
+                int num = groupPosition;
 
-        //now create a listener!
-        button.setOnClickListener(new Button.OnClickListener() {
-            int num = groupPosition;
+                @Override
+                public void onClick(View v) {
+                    //now insert the event into my_events!
+                    String header = (String) getGroup(num);
+                    Log.d("TOUCH EVENT: ", "TOUCHED!");
 
-            @Override
-            public void onClick(View v) {
-                //now insert the event into my_events!
-                String header = (String) getGroup(num);
-                Log.d("TOUCH EVENT: ", "TOUCHED!");
+                    //now grab the database!
+                    Database database = Database.getInstance();
 
-                //now grab the database!
-                Database database = Database.getInstance();
-
-                //now insert it!
-                database.insertMyEvents(header);
-            }
-        });
+                    //now insert it!
+                    database.insertMyEvents(header);
+                }
+            });
+        } else {
+            button.setVisibility(View.INVISIBLE);
+        }
 
         //now set the text!
         childView.setText(childText);
@@ -194,7 +197,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
             //now add the title text!
             titleView.setText(Html.fromHtml("<b>" + title + "</b><br />" + textDate));
         } else {
-            titleView.setText("No events saved");
+            titleView.setText("No events");
         }
 
         return view;
