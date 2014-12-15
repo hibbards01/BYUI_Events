@@ -172,51 +172,6 @@ public class Database extends SQLiteOpenHelper {
         Log.d("Selecting events", "All");
 
         gatherDataFromCursor(cursor, header, childs, images, dateList);
-/*        // Now check to make sure there is something there!
-        if (cursor != null && cursor.getCount() > 0) {
-            // Go to the first element in the list!
-            cursor.moveToFirst();
-
-            // And make some variables...
-            String child;
-            int index = 0;
-
-            // Now loop through all the events and grab them!
-            for (int i = 0; i < cursor.getCount(); i++) {
-                String event_id = cursor.getString(cursor.getColumnIndex("event_id"));
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                String dateText = cursor.getString(cursor.getColumnIndex("date"));
-                String start_time = cursor.getString(cursor.getColumnIndex("start_time"));
-                String end_time = cursor.getString(cursor.getColumnIndex("end_time"));
-                String description = cursor.getString(cursor.getColumnIndex("description"));
-                String category = cursor.getString(cursor.getColumnIndex("category"));
-                String location = cursor.getString(cursor.getColumnIndex("location"));
-                byte [] image = cursor.getBlob(cursor.getColumnIndex("picture"));
-
-                // Now combine them!
-                String [] date = {dateText, (timeFormat(start_time) + "-" + timeFormat(end_time))};
-
-                // This variable is only to make sure the maps have a unique key.
-                String event = event_id + "~" + name;
-
-                child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
-
-                // Now insert them into the lists and map!
-                header.add(index, event);
-                childs.put(event, child);
-                images.add(index++, image);
-                dateList.put(event, date);
-
-                // Now move forward by one..
-                cursor.moveToNext();
-            }
-        } else {
-            // Display that no events are happening on this date!
-            Log.d("DEBUG1: ", "No events saved!");
-        }
-
-        // Remember to close it!
-        cursor.close();*/
         db.close();
     }
 
@@ -276,51 +231,6 @@ public class Database extends SQLiteOpenHelper {
         }
 
         gatherDataFromCursor(cursor, header, childs, images, dateList);
-/*        // Now check to make sure there is something there!
-        if (cursor != null && cursor.getCount() > 0) {
-            // Go to the first element in the list!
-            cursor.moveToFirst();
-
-            // And make some variables...
-            String child;
-            int index = 0;
-
-            // Now loop through all the events and grab them!
-            for (int i = 0; i < cursor.getCount(); i++) {
-                String event_id = cursor.getString(cursor.getColumnIndex("event_id"));
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                String dateText = cursor.getString(cursor.getColumnIndex("date"));
-                String start_time = cursor.getString(cursor.getColumnIndex("start_time"));
-                String end_time = cursor.getString(cursor.getColumnIndex("end_time"));
-                String description = cursor.getString(cursor.getColumnIndex("description"));
-                String category = cursor.getString(cursor.getColumnIndex("category"));
-                String location = cursor.getString(cursor.getColumnIndex("location"));
-                byte [] image = cursor.getBlob(cursor.getColumnIndex("picture"));
-
-                //now combine them!
-                String [] date = {dateText, (timeFormat(start_time) + "-" + timeFormat(end_time))};
-
-                //this variable is only to make sure the maps have a unique key.
-                String event = event_id + "~" + name;
-
-                child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
-
-                //now insert them into the lists and map!
-                header.add(index, event);
-                childs.put(event, child);
-                images.add(index++, image);
-                dateList.put(event, date);
-
-                //now move forward by one..
-                cursor.moveToNext();
-            }
-        } else {
-            //display that no events are happening on this date!
-            header.add(0, "No events today");
-        }
-
-        //remember to close it!
-        cursor.close();*/
         db.close();
     }
 
