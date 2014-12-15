@@ -2,6 +2,7 @@ package com.eventsproject.byui_events;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -133,32 +134,38 @@ public class WeekActivity extends Activity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("WEEK: ", "Onclick event for back!");
                 //grab the date!
                 String [] splitDate = stringCurrentDate.split("-");
 
                 Calendar calendar = new GregorianCalendar(Integer.parseInt(splitDate[0]),
-                        Integer.parseInt(splitDate[1]),
+                        Integer.parseInt(splitDate[1]) - 1,
                         Integer.parseInt(splitDate[2]));
 
                 //move back seven days!
                 calendar.add(Calendar.DAY_OF_MONTH, -7);
                 currentDate = calendar.getTime();
+
+                setAdapter();
             }
         });
 
         forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("WEEK: ", "Onclick event for forward!");
                 //grab the date!
                 String [] splitDate = stringCurrentDate.split("-");
 
                 Calendar calendar = new GregorianCalendar(Integer.parseInt(splitDate[0]),
-                        Integer.parseInt(splitDate[1]),
+                        Integer.parseInt(splitDate[1]) - 1,
                         Integer.parseInt(splitDate[2]));
 
                 //move forward seven days!
                 calendar.add(Calendar.DAY_OF_MONTH, 7);
                 currentDate = calendar.getTime();
+
+                setAdapter();
             }
         });
     }

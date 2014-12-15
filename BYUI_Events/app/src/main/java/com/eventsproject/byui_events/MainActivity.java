@@ -28,6 +28,7 @@ public class MainActivity extends TabActivity {
     private Menu menu; //save the menu
     private SQLDatabase dataBaseHome;
     private Database db = null;
+    private View search = null;
 
     /*
      * MEMBER METHODS
@@ -65,9 +66,27 @@ public class MainActivity extends TabActivity {
 
         this.menu = menu;
         final Activity mainActivity = this;
+        final MenuItem searchBar = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView)searchBar.getActionView();
 
-        MenuItem searchBar = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView)searchBar.getActionView();
+        //now for the textview!
+
+        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+        View searchPlate = searchView.findViewById(searchPlateId);
+
+        if (searchPlate!=null) {
+            searchPlate.setBackgroundColor(getResources().getColor(R.color.darkgray));
+
+            int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+            TextView searchText = (TextView) searchPlate.findViewById(searchTextId);
+
+            if (searchText!=null) {
+                searchText.setTextColor(getResources().getColor(R.color.white));
+                searchText.setHintTextColor(getResources().getColor(R.color.white));
+                searchText.setTextSize(15);
+            }
+        }
+
         searchView.setQueryHint("Search");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
@@ -82,28 +101,11 @@ public class MainActivity extends TabActivity {
                 Log.d("Search", "onQueryTextSubmit");
 
                 new SearchActivity(mainActivity, query);
+                searchView.setIconified(true);
+                searchView.onActionViewCollapsed();
                 return true;
             }
         });
-
-        //now for the textview!
-
-        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
-        View searchPlate = searchView.findViewById(searchPlateId);
-
-
-        if (searchPlate!=null) {
-            searchPlate.setBackgroundColor(getResources().getColor(R.color.darkgray));
-
-            int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-            TextView searchText = (TextView) searchPlate.findViewById(searchTextId);
-
-            if (searchText!=null) {
-                searchText.setTextColor(getResources().getColor(R.color.white));
-                searchText.setHintTextColor(getResources().getColor(R.color.white));
-                searchText.setTextSize(15);
-            }
-        }
 
         return true;
     }
@@ -128,7 +130,6 @@ public class MainActivity extends TabActivity {
                 db.deleteEvents();
                 return true;
             case R.id.action_search:
-                Toast.makeText(this, "Running search", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.filter_activities_complete:
             case R.id.filter_activities_life_skills:

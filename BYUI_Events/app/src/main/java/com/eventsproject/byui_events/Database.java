@@ -101,6 +101,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     /**
+     * INSERTMYEVENTS
      *  Insert the event into the myevents table!
      * @param header
      */
@@ -158,6 +159,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     /**
+     * SELECTALLMY_EVENTS
      *  This will select all the events from My_Events table.
      * @param header
      * @param childs
@@ -176,6 +178,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     /**
+     * INSERTEVENT
      *  Add an event to the table!
      * @param textDate
      * @param pic
@@ -206,6 +209,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     /**
+     * SELECTEVENTS
      *  Select the events based on the day!
      * @param startDate
      * @param endDate
@@ -234,6 +238,15 @@ public class Database extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * SEARCHEVENTS
+     *  Search for the event!
+     * @param queryTitle
+     * @param header
+     * @param childs
+     * @param images
+     * @param dateList
+     */
     public void searchEvents(String queryTitle, List<String> header, Map<String, String> childs,
                              List<byte[]> images, Map<String, String[]> dateList) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -246,7 +259,8 @@ public class Database extends SQLiteOpenHelper {
     }
 
     /**
-     * If the cursor isn't null then we need to get stuff from it and store it in the parameters provided.
+     * GATHERDATAFROMCURSOR
+     *  If the cursor isn't null then we need to get stuff from it and store it in the parameters provided.
      * @param cursor
      * @param header
      * @param childs

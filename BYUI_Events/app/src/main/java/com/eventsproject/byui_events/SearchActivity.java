@@ -29,6 +29,12 @@ public class SearchActivity  {
     Database database;
     String queryText;
 
+    /**
+     * SEARCHACTIVITY
+     *  This will search for events!
+     * @param activity
+     * @param queryText
+     */
     protected SearchActivity(Activity activity, String queryText) {
         this.activity = activity;
         database = Database.getInstance();
@@ -56,6 +62,9 @@ public class SearchActivity  {
         dialog.show();
     }
 
+    /**
+     * SETADPATER
+     */
     private void setAdapter() {
         //create the lists!
         List<String> headerList = new ArrayList<String>();
