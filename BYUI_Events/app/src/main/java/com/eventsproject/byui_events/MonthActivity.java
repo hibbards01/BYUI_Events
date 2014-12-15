@@ -7,6 +7,7 @@ import android.view.GestureDetector;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,8 +30,8 @@ public class MonthActivity extends Activity {
     private ExpandableListView expListView;
     private TextView monthView;
     private Database database = Database.getInstance();
-    //private GestureDetector gd;
     private Date date;
+    private String startDate;
 
     /*
      * MEMBER METHDOS
@@ -60,7 +61,7 @@ public class MonthActivity extends Activity {
      */
     private void setAdapter() {
         //grab the date!
-        String startDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        startDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
         String endDate = grabEndDate(startDate);
 
         //create the lists!
@@ -107,6 +108,59 @@ public class MonthActivity extends Activity {
                 }
             }
         });
+
+        //grab the image buttons!
+        ImageButton back = (ImageButton) findViewById(R.id.month_back_button);
+        ImageButton forward = (ImageButton) findViewById(R.id.month_for_button);
+
+        //now create the listeners!
+        back.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                String [] splitDate = startDate.split("-");
+                int numMonth = Integer.parseInt(splitDate[1]) - 1;
+                int numYear = Integer.parseInt(splitDate[0]);
+
+                //minus one to month!
+                numMonth -= 1;
+
+                if (numMonth == -1) {
+                    numMonth = 11;
+                    numYear -= 1;
+                }
+
+                //Log.d("MonthBack: ", Integer.toString(numYear) + " " + Integer.toString(numMonth));
+                Calendar calendar = new GregorianCalendar(numYear, numMonth, 1);
+                //Log.d("MonthBack: ", calendar.toString());
+                date = calendar.getTime();
+                //Log.d("MonthBack: ", date.toString());
+                setAdapter();
+            }
+        });
+
+        forward.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                String [] splitDate = startDate.split("-");
+                int numMonth = Integer.parseInt(splitDate[1]) - 1;
+                int numYear = Integer.parseInt(splitDate[0]);
+
+                //add one to the month!
+                numMonth += 1;
+
+                if (numMonth == 12) {
+                    numMonth = 0;
+                    numYear += 1;
+                }
+
+                Calendar calendar = new GregorianCalendar(numYear, numMonth, 1);
+                date = calendar.getTime();
+                Log.d("Monthfor: ", date.toString());
+                setAdapter();
+            }
+        });
     }
 
     /**
@@ -119,8 +173,8 @@ public class MonthActivity extends Activity {
         //split the string!
         String [] splitDate = date.split("-");
         String [] month = {
-                "none", "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
+                "none", "  January", "  February", "  March", "  April", "  May", "  June",
+                "  July", "  August", "  September", "  October", "  November", "  December"
         };
 
         String text = month[Integer.parseInt(splitDate[1])] + " " + splitDate[0];
