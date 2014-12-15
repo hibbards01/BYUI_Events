@@ -1,7 +1,10 @@
 package com.eventsproject.byui_events;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -23,7 +27,6 @@ public class MainActivity extends TabActivity {
      */
     private Menu menu; //save the menu
     private SQLDatabase dataBaseHome;
-    //private DatabaseHelper db = DatabaseHelper.newInstance(this);
     private Database db = null;
 
     /*
@@ -61,10 +64,27 @@ public class MainActivity extends TabActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         this.menu = menu;
+        final Activity mainActivity = this;
 
         MenuItem searchBar = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView)searchBar.getActionView();
         searchView.setQueryHint("Search");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d("Search", "onQueryTextChange");
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("Search", "onQueryTextSubmit");
+
+                new SearchActivity(mainActivity, query);
+                return true;
+            }
+        });
 
         //now for the textview!
 
