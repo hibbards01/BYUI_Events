@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 
 public class MyEventsActivity extends Activity {
@@ -67,12 +69,12 @@ public class MyEventsActivity extends Activity {
         database.selectAllMy_Events(headerList, childList, images, dateList);
 
         //check the lists!
-        if (headerList.size() == 0) {
+        if (headerList.size() == 1) {
             dateView.setText("No events saved");
         } else {
             String title;
 
-            if (headerList.size() == 1) {
+            if (headerList.size() > 1) {
                 title = " Event saved";
             } else {
                 title = " Events saved";

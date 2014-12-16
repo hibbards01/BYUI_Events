@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ public class Database extends SQLiteOpenHelper {
     private final static String DATABASE_NAME = "BYUIEvents.db";
     private final static int VERSION = 1;
     private static Database database = null;
+    private List<String> filters = new ArrayList<String>();
 
     private static final String SQL_CREATE_EVENT_TABLE =
             "CREATE TABLE IF NOT EXISTS event"
@@ -47,6 +49,15 @@ public class Database extends SQLiteOpenHelper {
                     + ", location    TEXT"
                     + ", picture     BLOB)";
 
+    private static final String SQL_CREATE_COMMON_LOOKUP_TABLE =
+            "CREATE TABLE IF NOT EXISTS common_lookup"
+            + "( event_id      INTEGER"
+            + ", calendar_name TEXT)";
+
+    private static final String SQL_CREATE_CALENDAR_TABLE =
+            "CREATE TABLE IF NOT EXISTS calendar"
+            + "( name  Text)";
+
     /**
      *  Creates the database!
      * @param db
@@ -56,6 +67,8 @@ public class Database extends SQLiteOpenHelper {
         //create table!
         db.execSQL(SQL_CREATE_EVENT_TABLE);
         db.execSQL(SQL_CREATE_MY_EVENTS_TABLE);
+        db.execSQL(SQL_CREATE_CALENDAR_TABLE);
+        db.execSQL(SQL_CREATE_COMMON_LOOKUP_TABLE);
     }
 
     /**
@@ -67,6 +80,30 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+    }
+
+    /**
+     * ADDTOFILTER
+     *  Add to the list of strings!
+     * @param text
+     */
+    public void addToFilter(String text) {
+        filters.add(text);
+    }
+
+    /**
+     * DELETEFROMFILTER
+     * @param text
+     */
+    public void deleteFromFilter(String text) {
+        filters.remove(text);
+    }
+
+    /**
+     * DELETEALLFROMFILTER
+     */
+    public void deleteAllFromFilter() {
+        filters.clear();
     }
 
     /**
@@ -184,14 +221,12 @@ public class Database extends SQLiteOpenHelper {
      * @param pic
      */
     public void insertEvent(String [] textDate, byte [] pic) {
-        Log.d("SQL: ", "Adding to database!");
-
         // Grab the database!
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         // Now put the values into the table!
-        values.put("event_id", textDate[0]);
+        values.put("event_id", Integer.parseInt(textDate[0]));
         values.put("name", textDate[1]);
         values.put("date", textDate[2]);
         values.put("start_time", textDate[3]);
@@ -206,6 +241,111 @@ public class Database extends SQLiteOpenHelper {
 
         // Remember to close it!
         db.close();
+    }
+
+    /**
+     * INSERTINTOCALENDARANDCOMMONLOOKUP
+     *  This will insert the date into these tables:
+     *                  COMMON_LOOKUP
+     * @param clookup
+     */
+    public void insertCommonLookup(String [] clookup) {
+        Log.d("DATABASE: ", "Inserting into commonlookup");
+        //grab the database!
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //create a values variable
+        ContentValues values = new ContentValues();
+
+        //now put the data into the values!
+        values.put("event_id", Integer.parseInt(clookup[0]));
+        values.put("calendar_name", clookup[1]);
+
+        //now insert it!
+        db.insert("common_lookup", null, values);
+
+        db.close();
+    }
+
+    /**
+     * INSERTCALENDAR
+     *  Insert the names into the calendar table!
+     * @param name
+     */
+    public void insertCalendar(String name) {
+        Log.d("DATABASE: ", "Inserting into calendar");
+        //grab the database
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //insert into the table!
+        ContentValues value = new ContentValues();
+        value.put("name", name);
+
+        db.insert("calendar", null, value);
+
+        db.close();
+    }
+
+    /**
+     * GRABQUERY
+     *  This will create the query!
+     * @param startDate
+     * @param endDate
+     * @param db
+     * @return
+     */
+    public void grabQuery(String startDate, String endDate, SQLiteDatabase db) {
+        //create a new cursor!
+        Cursor cursor = null;
+        String query;
+
+        //only filter by day!
+        if (filters.size() == 0) {
+            if (startDate.equals(endDate)) {
+                query = "SELECT * FROM event WHERE date = '"
+                        + startDate + "'";
+            } else {
+                query = "SELECT * FROM event WHERE date BETWEEN '"
+                        + startDate + "' AND '" + endDate
+                        + "' ORDER BY date(date), start_time";
+            }
+        } else {
+            //else filter by the other things!
+            query = "SELECT * FROM event AS e " +
+                    "JOIN common_lookup AS co ON co.event_id = e.event_id " +
+                    "JOIN calendar AS ca ON ca.name = co.calendar_name " +
+                    "WHERE ";
+
+            String filterQuery = new String();
+
+            //grab the filter!
+            int count = 0;
+            for (String filter : filters) {
+                if (count == 0) {
+                    filterQuery = "ca.name = '" + filter + "'";
+                    count++;
+                } else {
+                    filterQuery = filterQuery + " OR ca.name = '" + filter + "'";
+                }
+            }
+
+            //now put it together!
+            query = query + filterQuery;
+
+            //now put the dates on too!
+            if (startDate.equals(endDate)) {
+                query = query + " AND e.date = '" + startDate + "'";
+            } else {
+                query = query + " AND e.date >= '" + startDate + "' AND e.date <= '" + endDate + "'" +
+                        " ORDER BY date(date), start_time";
+            }
+        }
+
+        Log.d("DATABASE: ", query);
+
+        //cursor = db.rawQuery(query, null);
+
+        //return cursor;
     }
 
     /**
@@ -233,6 +373,8 @@ public class Database extends SQLiteOpenHelper {
                                 + startDate + "' AND '" + endDate
                                 + "' ORDER BY date(date), start_time", null);
         }
+
+        grabQuery(startDate, endDate, db);
 
         gatherDataFromCursor(cursor, header, childs, images, dateList);
         db.close();
@@ -354,6 +496,8 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("event", null, null);
         db.delete("my_events", null, null);
+        db.delete("calendar", null, null);
+        db.delete("common_lookup", null, null);
         db.close();
     }
 }

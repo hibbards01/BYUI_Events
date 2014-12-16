@@ -67,9 +67,17 @@ public class SQLDatabase {
             //STEP 4: Execute a query
             Log.d("SQL: ","Creating statement...");
             stmt = conn.createStatement();
-            String sql;
-            sql = "SELECT event_id, name, description, date, start_time, end_time, category, location, picture FROM event";
-            ResultSet rs = stmt.executeQuery(sql);
+
+            //grab from all tables!
+            String events;
+            String common_lookup;
+            String calendar;
+
+            events = "SELECT event_id, name, description, date, start_time, end_time, category, location, picture FROM event";
+            common_lookup = "SELECT * FROM common_lookup";
+            calendar = "SELECT * FROM calendar";
+
+            ResultSet rs = stmt.executeQuery(events);
 
             Log.d("Made a change", "yes");
 
@@ -80,7 +88,7 @@ public class SQLDatabase {
 
                 /****************************************************************
                  * NOTE these are in a certain order. If you change this then make
-                 * sure to change the order in the DATABASEHELPER in the function ADDEVENT.
+                 * sure to change the order in the DATABASE in the function INSERTEVENT.
                  ****************************************************************/
                 data[0] = rs.getString("event_id");
                 data[1] = rs.getString("name");
@@ -96,8 +104,39 @@ public class SQLDatabase {
                 database.insertEvent(data, pic);
             }
 
+            ResultSet rs2 = stmt.executeQuery(calendar);
+
+            // Grab from the calendar table!
+            while (rs2.next()) {
+                //retrieve by column name
+                String data = new String();
+
+                //now grab from it!
+                data = rs2.getString("name");
+
+                //now insert it into the database!
+                database.insertCalendar(data);
+            }
+
+            ResultSet rs1 = stmt.executeQuery(common_lookup);
+
+            // and from the common_lookup!
+            while (rs1.next()) {
+                //retrieve by column name
+                String [] data = new String[2];
+
+                //now grab it!
+                data[0] = rs1.getString("event_id");
+                data[1] = rs1.getString("calendar_name");
+
+                //now insert it into the database!
+                database.insertCommonLookup(data);
+            }
+
             //STEP 6: Clean-up environment
             rs.close();
+            rs1.close();
+            rs2.close();
             stmt.close();
             conn.close();
         } catch(SQLException se){

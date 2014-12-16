@@ -2,7 +2,9 @@ package com.eventsproject.byui_events;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
@@ -15,9 +17,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 
-public class DayActivity extends Activity {
+public class DayActivity extends Activity implements Observer {
 
     /*
      * MEMBER VARIABLES
@@ -26,7 +30,7 @@ public class DayActivity extends Activity {
     private ExpandableListView expListView;
     private TextView dateView;
     private Database database = Database.getInstance();
-    private Date date;
+    private Date date = new Date();
 
     /*
      * MEMBER METHODS
@@ -34,7 +38,8 @@ public class DayActivity extends Activity {
 
     /**
      * ONCREATE
-     *  Create the list and display it!
+     * Create the list and display it!
+     *
      * @param savedInstanceState
      */
     @Override
@@ -42,8 +47,7 @@ public class DayActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day);
 
-        //grab the date!
-        date = new Date();
+        Log.d("DAY: ", "Created!");
         expListView = (ExpandableListView) findViewById(R.id.dayList);
         dateView = (TextView) findViewById(R.id.dayDate);
 
@@ -57,6 +61,8 @@ public class DayActivity extends Activity {
         //grab the date!
         String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
+        Log.d("Day: ", textDate);
+
         //create the lists!
         List<String> headerList = new ArrayList<String>();
         Map<String, String> childList = new HashMap<String, String>();
@@ -67,8 +73,10 @@ public class DayActivity extends Activity {
         database.selectEvents(textDate, textDate, headerList, childList, images, dateList);
 
         //and grab the date so it can be at the title!
-        textDate = dateFormat(textDate);
-        dateView.setText(textDate);
+        String text = dateFormat(textDate);
+        Log.d("Day: ", textDate);
+
+        dateView.setText(text);
 
         //now to put it on the screen!
         if (listAdapter == null) {
@@ -83,15 +91,16 @@ public class DayActivity extends Activity {
 
     /**
      * DATEFORMAT
-     *  Change the format of the date!
+     * Change the format of the date!
+     *
      * @param textDate
      * @return
      */
     private String dateFormat(String textDate) {
         //create the variables!
         String date;
-        String [] splitDate = textDate.split("-");
-        String [] month = {
+        String[] splitDate = textDate.split("-");
+        String[] month = {
                 "none", "  Jan", "  Feb", "  Mar", "  Apr", "  May", "  Jun",
                 "  Jul", "  Aug", "  Sep", "  Oct", "  Nov", "  Dec"
         };
@@ -102,17 +111,18 @@ public class DayActivity extends Activity {
     }
 
     /**
-     * ONSTART
-     *  This will start the activity!
+     * ONRESUME
+     * This will start the activity!
      */
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         //now create a listener for the list!
         //this will only allow one thing to be selected!
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousItem = -1;
+
             @Override
             public void onGroupExpand(int groupPosition) {
                 if (previousItem != groupPosition) {
@@ -152,6 +162,12 @@ public class DayActivity extends Activity {
                 setAdapter();
             }
         });
-   }
+    }
+
+    @Override
+    public void update(Observable observable, Object data) {
+        //setAdapter();
+        Log.d("ASYNC: ", this.toString());
+    }
 }
 

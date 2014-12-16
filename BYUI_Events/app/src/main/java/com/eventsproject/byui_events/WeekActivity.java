@@ -18,14 +18,16 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
-public class WeekActivity extends Activity {
+public class WeekActivity extends Activity implements Observer {
 
     private ExpandableListViewAdapter listAdapter;
     private ExpandableListView expListView;
     private TextView weekDateView;
     private Database database = Database.getInstance();
-    private Date currentDate;
+    private Date currentDate = new Date();
     private String stringCurrentDate;
 
     @Override
@@ -35,7 +37,6 @@ public class WeekActivity extends Activity {
 
         expListView = (ExpandableListView) findViewById(R.id.week_list);
         weekDateView = (TextView) findViewById(R.id.week_view);
-        currentDate = new Date();
 
         setAdapter();
     }
@@ -106,17 +107,17 @@ public class WeekActivity extends Activity {
     }
 
     /**
-     * ONSTART
-     *  This will start the activity!
+     * ONRESUME
      */
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         //now create a listener for the list!
         //this will only allow one thing to be selected!
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             int previousItem = -1;
+
             @Override
             public void onGroupExpand(int groupPosition) {
                 if (previousItem != groupPosition) {
@@ -168,6 +169,16 @@ public class WeekActivity extends Activity {
                 setAdapter();
             }
         });
+    }
+
+    /**
+     * UPDATE
+     * @param observable
+     * @param data
+     */
+    @Override
+    public void update(Observable observable, Object data) {
+        //setAdapter();
     }
 }
 

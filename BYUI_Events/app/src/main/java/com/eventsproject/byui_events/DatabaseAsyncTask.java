@@ -4,8 +4,13 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.TabHost;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observer;
 
 /**
  * Used to set up MainActivity with the tabs, but makes sure the database is filled before setting up the tabs.
@@ -61,18 +66,42 @@ public class DatabaseAsyncTask extends AsyncTask<SQLDatabase, Object, Object> {
         TabHost.TabSpec tab3 = tabHost.newTabSpec("MonthTab");
         TabHost.TabSpec tab4 = tabHost.newTabSpec("MyEventsTab");
 
-        // Set up tab name and activity
+
+        // Create all the activities!
+        DayActivity day = new DayActivity();
+        WeekActivity week = new WeekActivity();
+        MonthActivity month = new MonthActivity();
+        MyEventsActivity myevents = new MyEventsActivity();
+        List<Observer> observers = new ArrayList<Observer>();
+
+        Intent intent = new Intent(activity, day.getClass());
+
+        // Set up tab name
         tab1.setIndicator("Day");
-        tab1.setContent(new Intent(activity, DayActivity.class));
+        tab1.setContent(intent);
+
+        intent = new Intent(activity, week.getClass());
 
         tab2.setIndicator("Week");
-        tab2.setContent(new Intent(activity, WeekActivity.class));
+        tab2.setContent(intent);
+        Log.d("ASYNC: ", day.toString());
+
+        intent = new Intent(activity, month.getClass());
 
         tab3.setIndicator("Month");
-        tab3.setContent(new Intent(activity, MonthActivity.class));
+        tab3.setContent(intent);
+
+        intent = new Intent(activity, myevents.getClass());
 
         tab4.setIndicator("My Events");
-        tab4.setContent(new Intent(activity, MyEventsActivity.class));
+        tab4.setContent(intent);
+
+        //now give it back to main!
+        observers.add(day);
+        observers.add(week);
+        observers.add(month);
+
+        activity.addObserver(observers);
 
         // Now add to the host!
         tabHost.addTab(tab1);

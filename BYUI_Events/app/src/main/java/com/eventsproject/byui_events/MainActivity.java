@@ -8,11 +8,15 @@ import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.TouchDelegate;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -21,14 +25,19 @@ import android.content.Intent;
 import android.widget.TextView;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
 public class MainActivity extends TabActivity {
     /*
      * MEMBER VARIABLES
      */
     private Menu menu; //save the menu
     private SQLDatabase dataBaseHome;
-    private Database db = null;
-    private View search = null;
+    private Database database = null;
+    private List<Observer> activities = new ArrayList<Observer>();
 
     /*
      * MEMBER METHODS
@@ -45,12 +54,19 @@ public class MainActivity extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Database database = Database.newInstance(this);
-        db = Database.getInstance();
+        database = Database.newInstance(this);
 
         DatabaseAsyncTask asyncTask = new DatabaseAsyncTask(this);
 
         asyncTask.execute(dataBaseHome);
+    }
+
+    /**
+     * ADDOBSERVER
+     * @param observers
+     */
+    public void addObserver(List<Observer> observers) {
+        activities = observers;
     }
 
     /**
@@ -69,8 +85,7 @@ public class MainActivity extends TabActivity {
         final MenuItem searchBar = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView)searchBar.getActionView();
 
-        //now for the textview!
-
+        //now for the look on the searchview!
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
         View searchPlate = searchView.findViewById(searchPlateId);
 
@@ -87,6 +102,7 @@ public class MainActivity extends TabActivity {
             }
         }
 
+        //also create a listener to see when the person is editing it!
         searchView.setQueryHint("Search");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
@@ -122,17 +138,32 @@ public class MainActivity extends TabActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        Log.d("HERE!", "HERE!");
 
         switch(id) {
             case R.id.action_settings:
                 Toast.makeText(this, "Running settings", Toast.LENGTH_LONG).show();
-                db.deleteEvents();
+                database.deleteEvents();
                 return true;
             case R.id.action_search:
                 return true;
-            case R.id.filter_activities_complete:
+            case R.id.filter_highlighted_events:
             case R.id.filter_activities_life_skills:
+            case R.id.filter_academic_soical:
+            case R.id.filter_activities_outdoor:
+            case R.id.filter_activities_service:
+            case R.id.filter_activities_awarness:
+            case R.id.filter_dept_music:
+            case R.id.filter_employee_events:
+            case R.id.filter_employee_training:
+            case R.id.filter_forum:
+            case R.id.filter_free_play:
+            case R.id.filter_meeting:
+            case R.id.filter_presentations:
+            case R.id.filter_recital_faculty:
+            case R.id.filter_recital_student:
+            case R.id.filter_student_assc:
+            case R.id.filter_student_highlighted:
+            case R.id.filter_student_spirit:
             case R.id.filter_activities_social:
             case R.id.filter_activities_sports:
             case R.id.filter_activities_talent:
@@ -144,20 +175,34 @@ public class MainActivity extends TabActivity {
             case R.id.filter_devo_speeches:
             case R.id.filter_get_connected:
             case R.id.filter_graduation:
-            case R.id.filter_performance_events:
-            case R.id.filter_performing_visual_arts:
-            case R.id.filter_reception_openhouse:
-            case R.id.filter_reception_public:
             case R.id.filter_theatre: {
                 if (item.isChecked()) {
                     item.setChecked(false);
+                    database.deleteFromFilter(item.toString());
                 } else {
                     item.setChecked(true);
+                    database.addToFilter(item.toString());
                 }
+
+                //now tell everyone!
+                for (Observer ob : activities) {
+                    ob.update(new Observable(), new Object());
+                }
+
+                Log.d("ASYNC: ", activities.get(0).toString());
+
                 return true;
             }
             case R.id.action_clear_filters: {
+                //uncheck everyone!
                 unCheckBoxes();
+                //and delete from the filter list
+                database.deleteAllFromFilter();
+                //now tell everyone!
+//                for (Observer ob : activities) {
+//                    ob.update(new Observable(), new Object());
+//                }
+
                 return true;
             }
             default:
@@ -171,7 +216,7 @@ public class MainActivity extends TabActivity {
      */
     public void unCheckBoxes() {
         //now go thru all the items in the menu!
-        MenuItem item = menu.getItem(0);
+        MenuItem item = menu.getItem(1);
         SubMenu sub = item.getSubMenu();
         int num = sub.size();
         //now loop thru each item!

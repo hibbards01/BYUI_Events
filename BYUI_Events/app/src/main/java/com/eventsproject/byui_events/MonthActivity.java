@@ -21,8 +21,10 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
-public class MonthActivity extends Activity {
+public class MonthActivity extends Activity implements Observer {
     /*
      * MEMBER VARIABLES
      */
@@ -30,7 +32,7 @@ public class MonthActivity extends Activity {
     private ExpandableListView expListView;
     private TextView monthView;
     private Database database = Database.getInstance();
-    private Date date;
+    private Date date = new Date();
     private String startDate;
 
     /*
@@ -50,7 +52,6 @@ public class MonthActivity extends Activity {
         //create new list and textview!
         expListView = (ExpandableListView) findViewById(R.id.monthList);
         monthView = (TextView) findViewById(R.id.monthView);
-        date = new Date();
 
         //now set the adapter!
         setAdapter();
@@ -89,12 +90,12 @@ public class MonthActivity extends Activity {
     }
 
     /**
-     * ONSTART
+     * ONRESUME
      *  This will start the activity!
      */
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         //now create a listener for the list!
         //this will only allow one thing to be selected!
@@ -208,5 +209,15 @@ public class MonthActivity extends Activity {
         Log.d("EndDate: ", endDate);
 
         return endDate;
+    }
+
+    /**
+     * UPDATE
+     * @param observable
+     * @param data
+     */
+    @Override
+    public void update(Observable observable, Object data) {
+        //setAdapter();
     }
 }
