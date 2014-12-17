@@ -1,30 +1,19 @@
 package com.eventsproject.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.eventsproject.byui_events.ActivityObserver;
-import com.eventsproject.byui_events.Database;
 import com.eventsproject.byui_events.ExpandableListViewAdapter;
 import com.eventsproject.byui_events.R;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 public class WeekActivity extends TemplateActivity implements ActivityObserver {
     private static ExpandableListViewAdapter listAdapter;

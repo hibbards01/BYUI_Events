@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.eventsproject.activities.ActivityObserver;
 import com.eventsproject.activities.DayActivity;
 import com.eventsproject.activities.MonthActivity;
 import com.eventsproject.activities.MyEventsActivity;

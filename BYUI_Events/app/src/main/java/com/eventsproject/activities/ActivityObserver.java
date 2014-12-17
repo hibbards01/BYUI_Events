@@ -1,4 +1,4 @@
-package com.eventsproject.byui_events;
+package com.eventsproject.activities;
 
 /**
  * Created by SamuelHibbard on 12/16/14.

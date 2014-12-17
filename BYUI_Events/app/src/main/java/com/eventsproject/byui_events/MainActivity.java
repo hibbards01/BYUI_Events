@@ -8,10 +8,10 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.Toast;
 import android.widget.TextView;
 import android.util.Log;
 
+import com.eventsproject.activities.ActivityObserver;
 import com.eventsproject.activities.SearchActivity;
 
 import java.util.ArrayList;

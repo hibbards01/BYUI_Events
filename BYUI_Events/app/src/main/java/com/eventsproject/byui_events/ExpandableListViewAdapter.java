@@ -1,26 +1,20 @@
 package com.eventsproject.byui_events;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import org.w3c.dom.Text;
 
-import java.sql.Blob;
-import java.util.HashMap;
+import com.eventsproject.activities.ActivityObserver;
+
 import java.util.Map;
 import java.util.List;
 
