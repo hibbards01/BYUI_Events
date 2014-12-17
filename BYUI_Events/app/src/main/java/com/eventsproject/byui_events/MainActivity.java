@@ -1,34 +1,21 @@
 package com.eventsproject.byui_events;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.TabActivity;
-import android.content.DialogInterface;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.view.TouchDelegate;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ExpandableListView;
-import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
-import android.widget.TabHost;
-import android.content.Intent;
 import android.widget.TextView;
 import android.util.Log;
 
+import com.eventsproject.activities.SearchActivity;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 public class MainActivity extends TabActivity {
     /*
@@ -37,7 +24,7 @@ public class MainActivity extends TabActivity {
     private Menu menu; //save the menu
     private SQLDatabase dataBaseHome;
     private Database database = null;
-    private List<Observer> activities = new ArrayList<Observer>();
+    private List<ActivityObserver> activities = new ArrayList<ActivityObserver>();
 
     /*
      * MEMBER METHODS
@@ -65,8 +52,12 @@ public class MainActivity extends TabActivity {
      * ADDOBSERVER
      * @param observers
      */
-    public void addObserver(List<Observer> observers) {
+    public void addObserver(List<ActivityObserver> observers) {
         activities = observers;
+    }
+
+    public ActivityObserver getObserver(int loc) {
+        return activities.get(loc);
     }
 
     /**
@@ -185,8 +176,8 @@ public class MainActivity extends TabActivity {
                 }
 
                 //now tell everyone!
-                for (Observer ob : activities) {
-                    ob.update(new Observable(), new Object());
+                for (ActivityObserver ob : activities) {
+                    ob.update();
                 }
 
                 Log.d("ASYNC: ", activities.get(0).toString());

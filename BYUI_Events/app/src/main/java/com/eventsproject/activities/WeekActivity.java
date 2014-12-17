@@ -1,4 +1,4 @@
-package com.eventsproject.byui_events;
+package com.eventsproject.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,6 +9,11 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.eventsproject.byui_events.ActivityObserver;
+import com.eventsproject.byui_events.Database;
+import com.eventsproject.byui_events.ExpandableListViewAdapter;
+import com.eventsproject.byui_events.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,14 +26,13 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-public class WeekActivity extends Activity implements Observer {
+public class WeekActivity extends TemplateActivity implements ActivityObserver {
+    private static ExpandableListViewAdapter listAdapter;
+    private static ExpandableListView expListView;
+    private static TextView textView;
 
-    private ExpandableListViewAdapter listAdapter;
-    private ExpandableListView expListView;
-    private TextView weekDateView;
-    private Database database = Database.getInstance();
-    private Date currentDate = new Date();
-    private String stringCurrentDate;
+    private String stringStartDate;
+    private String stringEndDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,19 +40,21 @@ public class WeekActivity extends Activity implements Observer {
         setContentView(R.layout.activity_week);
 
         expListView = (ExpandableListView) findViewById(R.id.week_list);
-        weekDateView = (TextView) findViewById(R.id.week_view);
+        textView = (TextView) findViewById(R.id.week_view);
 
         setAdapter();
     }
 
-    /**
-     * SETADAPTER
-     *  Creates the list!
-     */
-    public void setAdapter() {
+    @Override
+    protected void grabFromDatabase() {
+        setUpStartAndEndDateStrings();
+        database.selectEvents(stringStartDate, stringEndDate, headerList, childList, imageList, dateList);
+    }
+
+    private void setUpStartAndEndDateStrings() {
         // Grab the current date!
-        stringCurrentDate = new SimpleDateFormat("yyyy-MM-dd").format(currentDate);
-        String[] dateParts = stringCurrentDate.split("-");
+        stringDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        String[] dateParts = stringDate.split("-");
 
         Calendar calendar = new GregorianCalendar(
                 Integer.parseInt(dateParts[0]),
@@ -58,52 +64,33 @@ public class WeekActivity extends Activity implements Observer {
         // Find start of the week of current day
         calendar.add(Calendar.DAY_OF_MONTH, -(calendar.get(Calendar.DAY_OF_WEEK)-1));
         Date startDate = calendar.getTime();
-        String stringStartDate = new SimpleDateFormat("yyyy-MM-dd").format(startDate);
+        stringStartDate = new SimpleDateFormat("yyyy-MM-dd").format(startDate);
 
         // Find end of the week of current day
         calendar.add(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_WEEK)+5);
         Date endDate = calendar.getTime();
-        String stringEndDate = new SimpleDateFormat("yyy-MM-dd").format(endDate);
+        stringEndDate = new SimpleDateFormat("yyy-MM-dd").format(endDate);
+    }
 
-        //create the lists!
-        List<String> headerList = new ArrayList<String>();
-        Map<String, String> childList = new HashMap<String, String>();
-        List<byte[]> images = new ArrayList<byte[]>();
-        Map<String, String[]> dateList = new HashMap<String, String[]>();
-
-        // Select the events that fall under this time period
-        database.selectEvents(stringStartDate, stringEndDate, headerList, childList, images, dateList);
-
+    @Override
+    protected void setTitle() {
         // Set the start and end dates as the title
         stringStartDate = dateFormat(stringStartDate);
         stringEndDate = dateFormat(stringEndDate);
-        weekDateView.setText(stringStartDate + " to " + stringEndDate);
+        textView.setText(stringStartDate + " to " + stringEndDate);
+    }
 
+    @Override
+    protected void setUpExpandableListViewAdapter() {
         // Now to put it on the screen!
-        listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "WEEK");
+        if (listAdapter == null) {
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, imageList, dateList, "WEEK");
+        } else {
+            listAdapter.setLists(headerList, childList, imageList, dateList);
+        }
 
         // Now set it to the screen!
         expListView.setAdapter(listAdapter);
-    }
-
-    /**
-     * DATEFORMAT
-     *  Grab the month!
-     * @param textDate
-     * @return
-     */
-    private String dateFormat(String textDate) {
-        //create the variables!
-        String date = "";
-        String [] splitDate = textDate.split("-");
-        String [] month = {
-                "none", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        };
-
-        date = month[Integer.parseInt(splitDate[1])] + " " + splitDate[2] + " " + splitDate[0];
-
-        return date;
     }
 
     /**
@@ -137,7 +124,7 @@ public class WeekActivity extends Activity implements Observer {
             public void onClick(View v) {
                 Log.d("WEEK: ", "Onclick event for back!");
                 //grab the date!
-                String [] splitDate = stringCurrentDate.split("-");
+                String [] splitDate = stringDate.split("-");
 
                 Calendar calendar = new GregorianCalendar(Integer.parseInt(splitDate[0]),
                         Integer.parseInt(splitDate[1]) - 1,
@@ -145,7 +132,7 @@ public class WeekActivity extends Activity implements Observer {
 
                 //move back seven days!
                 calendar.add(Calendar.DAY_OF_MONTH, -7);
-                currentDate = calendar.getTime();
+                date = calendar.getTime();
 
                 setAdapter();
             }
@@ -156,7 +143,7 @@ public class WeekActivity extends Activity implements Observer {
             public void onClick(View v) {
                 Log.d("WEEK: ", "Onclick event for forward!");
                 //grab the date!
-                String [] splitDate = stringCurrentDate.split("-");
+                String[] splitDate = stringDate.split("-");
 
                 Calendar calendar = new GregorianCalendar(Integer.parseInt(splitDate[0]),
                         Integer.parseInt(splitDate[1]) - 1,
@@ -164,7 +151,7 @@ public class WeekActivity extends Activity implements Observer {
 
                 //move forward seven days!
                 calendar.add(Calendar.DAY_OF_MONTH, 7);
-                currentDate = calendar.getTime();
+                date = calendar.getTime();
 
                 setAdapter();
             }
@@ -173,12 +160,10 @@ public class WeekActivity extends Activity implements Observer {
 
     /**
      * UPDATE
-     * @param observable
-     * @param data
      */
     @Override
-    public void update(Observable observable, Object data) {
-        //setAdapter();
+    public void update() {
+        setAdapter();
     }
 }
 

@@ -1,4 +1,4 @@
-package com.eventsproject.byui_events;
+package com.eventsproject.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,6 +11,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+
+import com.eventsproject.byui_events.Database;
+import com.eventsproject.byui_events.ExpandableListViewAdapter;
+import com.eventsproject.byui_events.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,7 +39,7 @@ public class SearchActivity  {
      * @param activity
      * @param queryText
      */
-    protected SearchActivity(Activity activity, String queryText) {
+    public SearchActivity(Activity activity, String queryText) {
         this.activity = activity;
         database = Database.getInstance();
         this.queryText = queryText;

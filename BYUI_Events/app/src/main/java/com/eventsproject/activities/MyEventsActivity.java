@@ -1,4 +1,4 @@
-package com.eventsproject.byui_events;
+package com.eventsproject.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,6 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.eventsproject.byui_events.Database;
+import com.eventsproject.byui_events.ExpandableListViewAdapter;
+import com.eventsproject.byui_events.R;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -69,12 +73,12 @@ public class MyEventsActivity extends Activity {
         database.selectAllMy_Events(headerList, childList, images, dateList);
 
         //check the lists!
-        if (headerList.size() == 1) {
+        if (childList.size() == 0) {
             dateView.setText("No events saved");
         } else {
             String title;
 
-            if (headerList.size() > 1) {
+            if (childList.size() == 1) {
                 title = " Event saved";
             } else {
                 title = " Events saved";

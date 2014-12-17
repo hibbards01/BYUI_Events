@@ -1,16 +1,18 @@
 package com.eventsproject.byui_events;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.eventsproject.activities.DayActivity;
+import com.eventsproject.activities.MonthActivity;
+import com.eventsproject.activities.MyEventsActivity;
+import com.eventsproject.activities.WeekActivity;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observer;
 
 /**
  * Used to set up MainActivity with the tabs, but makes sure the database is filled before setting up the tabs.
@@ -72,21 +74,29 @@ public class DatabaseAsyncTask extends AsyncTask<SQLDatabase, Object, Object> {
         WeekActivity week = new WeekActivity();
         MonthActivity month = new MonthActivity();
         MyEventsActivity myevents = new MyEventsActivity();
-        List<Observer> observers = new ArrayList<Observer>();
+        List<ActivityObserver> observers = new ArrayList<ActivityObserver>();
 
-        Intent intent = new Intent(activity, day.getClass());
+        //now give it back to main!
+        observers.add(day);
+        observers.add(week);
+        observers.add(month);
+        activity.addObserver(observers);
+
+        Intent intent = new Intent(activity, observers.get(0).getClass());
+
+        //Log.d("ASYNC: ", day.toString());
 
         // Set up tab name
         tab1.setIndicator("Day");
         tab1.setContent(intent);
 
-        intent = new Intent(activity, week.getClass());
+        intent = new Intent(activity, observers.get(1).getClass());
 
         tab2.setIndicator("Week");
         tab2.setContent(intent);
-        Log.d("ASYNC: ", day.toString());
+        //Log.d("ASYNC: ", day.toString());
 
-        intent = new Intent(activity, month.getClass());
+        intent = new Intent(activity, observers.get(2).getClass());
 
         tab3.setIndicator("Month");
         tab3.setContent(intent);
@@ -95,13 +105,6 @@ public class DatabaseAsyncTask extends AsyncTask<SQLDatabase, Object, Object> {
 
         tab4.setIndicator("My Events");
         tab4.setContent(intent);
-
-        //now give it back to main!
-        observers.add(day);
-        observers.add(week);
-        observers.add(month);
-
-        activity.addObserver(observers);
 
         // Now add to the host!
         tabHost.addTab(tab1);
@@ -117,6 +120,7 @@ public class DatabaseAsyncTask extends AsyncTask<SQLDatabase, Object, Object> {
         }
 
         // Middle tab (which is week) is the current tab
+        tabHost.setCurrentTab(2);
         tabHost.setCurrentTab(1);
     }
 }

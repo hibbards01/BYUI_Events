@@ -1,4 +1,4 @@
-package com.eventsproject.byui_events;
+package com.eventsproject.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,6 +9,11 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.eventsproject.byui_events.ActivityObserver;
+import com.eventsproject.byui_events.Database;
+import com.eventsproject.byui_events.ExpandableListViewAdapter;
+import com.eventsproject.byui_events.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,16 +26,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 
-public class DayActivity extends Activity implements Observer {
-
-    /*
-     * MEMBER VARIABLES
-     */
-    private ExpandableListViewAdapter listAdapter = null;
-    private ExpandableListView expListView;
-    private TextView dateView;
-    private Database database = Database.getInstance();
-    private Date date = new Date();
+public class DayActivity extends TemplateActivity implements ActivityObserver {
+    private static ExpandableListViewAdapter listAdapter;
+    private static ExpandableListView expListView;
+    private static TextView textView;
 
     /*
      * MEMBER METHODS
@@ -49,65 +48,44 @@ public class DayActivity extends Activity implements Observer {
 
         Log.d("DAY: ", "Created!");
         expListView = (ExpandableListView) findViewById(R.id.dayList);
-        dateView = (TextView) findViewById(R.id.dayDate);
+        textView = (TextView) findViewById(R.id.dayDate);
+
 
         setAdapter();
     }
 
-    /**
-     * SETADAPTER
-     */
-    private void setAdapter() {
+    @Override
+    protected void grabFromDatabase() {
         //grab the date!
-        String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        Log.d("Day: ", date.toString());
+        stringDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        Log.d("Day: ", textDate);
-
-        //create the lists!
-        List<String> headerList = new ArrayList<String>();
-        Map<String, String> childList = new HashMap<String, String>();
-        List<byte[]> images = new ArrayList<byte[]>();
-        Map<String, String[]> dateList = new HashMap<String, String[]>();
+        Log.d("Day: ", stringDate);
 
         //now grab from the database!
-        database.selectEvents(textDate, textDate, headerList, childList, images, dateList);
+        database.selectEvents(stringDate, stringDate, headerList, childList, imageList, dateList);
+    }
 
+    @Override
+    protected void setTitle() {
         //and grab the date so it can be at the title!
-        String text = dateFormat(textDate);
-        Log.d("Day: ", textDate);
+        stringDate = dateFormat(stringDate);
+        Log.d("Day: ", stringDate);
 
-        dateView.setText(text);
+        textView.setText(stringDate);
+    }
 
+    @Override
+    protected void setUpExpandableListViewAdapter() {
         //now to put it on the screen!
         if (listAdapter == null) {
-            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "DAY");
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, imageList, dateList, "DAY");
         } else {
-            listAdapter.setLists(headerList, childList, images, dateList);
+            listAdapter.setLists(headerList, childList, imageList, dateList);
         }
 
         //now set it to the screen!
         expListView.setAdapter(listAdapter);
-    }
-
-    /**
-     * DATEFORMAT
-     * Change the format of the date!
-     *
-     * @param textDate
-     * @return
-     */
-    private String dateFormat(String textDate) {
-        //create the variables!
-        String date;
-        String[] splitDate = textDate.split("-");
-        String[] month = {
-                "none", "  Jan", "  Feb", "  Mar", "  Apr", "  May", "  Jun",
-                "  Jul", "  Aug", "  Sep", "  Oct", "  Nov", "  Dec"
-        };
-
-        date = month[Integer.parseInt(splitDate[1])] + " " + splitDate[2] + " " + splitDate[0];
-
-        return date;
     }
 
     /**
@@ -165,9 +143,8 @@ public class DayActivity extends Activity implements Observer {
     }
 
     @Override
-    public void update(Observable observable, Object data) {
-        //setAdapter();
-        Log.d("ASYNC: ", this.toString());
+    public void update() {
+        setAdapter();
     }
 }
 

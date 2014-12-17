@@ -1,4 +1,4 @@
-package com.eventsproject.byui_events;
+package com.eventsproject.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,6 +10,11 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.eventsproject.byui_events.ActivityObserver;
+import com.eventsproject.byui_events.Database;
+import com.eventsproject.byui_events.ExpandableListViewAdapter;
+import com.eventsproject.byui_events.R;
 
 import org.w3c.dom.Text;
 
@@ -24,16 +29,10 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MonthActivity extends Activity implements Observer {
-    /*
-     * MEMBER VARIABLES
-     */
-    private ExpandableListViewAdapter listAdapter = null;
-    private ExpandableListView expListView;
-    private TextView monthView;
-    private Database database = Database.getInstance();
-    private Date date = new Date();
-    private String startDate;
+public class MonthActivity extends TemplateActivity implements ActivityObserver {
+    private static ExpandableListViewAdapter listAdapter;
+    private static ExpandableListView expListView;
+    private static TextView textView;
 
     /*
      * MEMBER METHDOS
@@ -51,38 +50,36 @@ public class MonthActivity extends Activity implements Observer {
 
         //create new list and textview!
         expListView = (ExpandableListView) findViewById(R.id.monthList);
-        monthView = (TextView) findViewById(R.id.monthView);
+        textView = (TextView) findViewById(R.id.monthView);
 
         //now set the adapter!
         setAdapter();
     }
 
-    /**
-     * SETADAPTER
-     */
-    private void setAdapter() {
+    @Override
+    protected void grabFromDatabase() {
         //grab the date!
-        startDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-        String endDate = grabEndDate(startDate);
-
-        //create the lists!
-        List<String> headerList = new ArrayList<String>();
-        HashMap<String, String> childList = new HashMap<String, String>();
-        List<byte[]> images = new ArrayList<byte[]>();
-        Map<String, String[]> dateList = new HashMap<String, String[]>();
+        stringDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        String endDate = grabEndDate(stringDate);
 
         //now grab from the database!
-        database.selectEvents(startDate, endDate, headerList, childList, images, dateList);
+        database.selectEvents(stringDate, endDate, headerList, childList, imageList, dateList);
+    }
 
+    @Override
+    protected void setTitle() {
         //and grab the date so it can be at the title!
-        String textDate = dateFormat(startDate);
-        monthView.setText(textDate);
+        String textDate = dateFormat(stringDate);
+        textView.setText(textDate);
+    }
 
+    @Override
+    protected void setUpExpandableListViewAdapter() {
         //now to put it on the screen!
         if (listAdapter == null) {
-            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "MONTH");
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, imageList, dateList, "MONTH");
         } else {
-            listAdapter.setLists(headerList, childList, images, dateList);
+            listAdapter.setLists(headerList, childList, imageList, dateList);
         }
 
         //now set it to the screen!
@@ -119,7 +116,7 @@ public class MonthActivity extends Activity implements Observer {
 
             @Override
             public void onClick(View v) {
-                String [] splitDate = startDate.split("-");
+                String [] splitDate = stringDate.split("-");
                 int numMonth = Integer.parseInt(splitDate[1]) - 1;
                 int numYear = Integer.parseInt(splitDate[0]);
 
@@ -144,7 +141,7 @@ public class MonthActivity extends Activity implements Observer {
 
             @Override
             public void onClick(View v) {
-                String [] splitDate = startDate.split("-");
+                String [] splitDate = stringDate.split("-");
                 int numMonth = Integer.parseInt(splitDate[1]) - 1;
                 int numYear = Integer.parseInt(splitDate[0]);
 
@@ -213,11 +210,9 @@ public class MonthActivity extends Activity implements Observer {
 
     /**
      * UPDATE
-     * @param observable
-     * @param data
      */
     @Override
-    public void update(Observable observable, Object data) {
-        //setAdapter();
+    public void update() {
+        setAdapter();
     }
 }

@@ -153,10 +153,15 @@ public class Database extends SQLiteOpenHelper {
         // Grab the event!
         Cursor cursor = read.rawQuery("SELECT * FROM event WHERE event_id = '"
                                      + event_id + "'", null);
+
+        //make sure that it is not the same event in myevents!
+        Cursor check = read.rawQuery("SELECT * FROM my_events WHERE event_id = '"
+                                     + event_id + "'", null);
+
         Log.d("Selecting event", event_id);
 
         // Grab the data... should be able to...
-        if (cursor != null && cursor.getCount() > 0) {
+        if (cursor != null && cursor.getCount() > 0 && check.getCount() == 0) {
             //go to the first element in the list!
             cursor.moveToFirst();
 
@@ -221,50 +226,81 @@ public class Database extends SQLiteOpenHelper {
      * @param pic
      */
     public void insertEvent(String [] textDate, byte [] pic) {
-        // Grab the database!
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
+        //check to see if the event is already there!
+        SQLiteDatabase read = this.getReadableDatabase();
+        boolean insert = false;
 
-        // Now put the values into the table!
-        values.put("event_id", Integer.parseInt(textDate[0]));
-        values.put("name", textDate[1]);
-        values.put("date", textDate[2]);
-        values.put("start_time", textDate[3]);
-        values.put("end_time", textDate[4]);
-        values.put("description", textDate[5]);
-        values.put("category", textDate[6]);
-        values.put("location", textDate[7]);
-        values.put("picture", pic);
+        Cursor cursor = read.rawQuery("SELECT event_id FROM event WHERE event_id = '" +
+                                      textDate[0] + "'", null);
 
-        // Now insert it!
-        db.insert("event", null, values);
+        if (cursor.getCount() != 1) {
+            Log.d("DATABASE: ", "Inserting into event");
+            insert = true;
+        }
 
-        // Remember to close it!
-        db.close();
+        read.close();
+
+        if (insert) {
+            // Grab the database!
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+
+
+            // Now put the values into the table!
+            values.put("event_id", Integer.parseInt(textDate[0]));
+            values.put("name", textDate[1]);
+            values.put("date", textDate[2]);
+            values.put("start_time", textDate[3]);
+            values.put("end_time", textDate[4]);
+            values.put("description", textDate[5]);
+            values.put("category", textDate[6]);
+            values.put("location", textDate[7]);
+            values.put("picture", pic);
+
+            // Now insert it!
+            db.insert("event", null, values);
+
+            // Remember to close it!
+            db.close();
+        }
     }
 
     /**
-     * INSERTINTOCALENDARANDCOMMONLOOKUP
+     * INSERTCOMMONLOOKUP
      *  This will insert the date into these tables:
      *                  COMMON_LOOKUP
      * @param clookup
      */
     public void insertCommonLookup(String [] clookup) {
-        Log.d("DATABASE: ", "Inserting into commonlookup");
-        //grab the database!
-        SQLiteDatabase db = this.getWritableDatabase();
 
-        //create a values variable
-        ContentValues values = new ContentValues();
+        SQLiteDatabase read = this.getReadableDatabase();
+        boolean insert = false;
 
-        //now put the data into the values!
-        values.put("event_id", Integer.parseInt(clookup[0]));
-        values.put("calendar_name", clookup[1]);
 
-        //now insert it!
-        db.insert("common_lookup", null, values);
+        Cursor cursor = read.rawQuery("SELECT * FROM common_lookup WHERE event_id = '" +
+                                    clookup[0] + "' AND calendar_name = '" + clookup[1] + "'", null);
 
-        db.close();
+
+
+        if (cursor.getCount() == 0) {
+            Log.d("DATABASE: ", clookup[0]);
+            read.close();
+
+            //grab the database!
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            //create a values variable
+            ContentValues values = new ContentValues();
+
+            //now put the data into the values!
+            values.put("event_id", Integer.parseInt(clookup[0]));
+            values.put("calendar_name", clookup[1]);
+
+            //now insert it!
+            db.insert("common_lookup", null, values);
+
+            db.close();
+        }
     }
 
     /**
@@ -273,17 +309,32 @@ public class Database extends SQLiteOpenHelper {
      * @param name
      */
     public void insertCalendar(String name) {
-        Log.d("DATABASE: ", "Inserting into calendar");
-        //grab the database
-        SQLiteDatabase db = this.getWritableDatabase();
 
-        //insert into the table!
-        ContentValues value = new ContentValues();
-        value.put("name", name);
+        SQLiteDatabase read = this.getReadableDatabase();
+        boolean insert = false;
 
-        db.insert("calendar", null, value);
+        Cursor cursor = read.rawQuery("SELECT name FROM calendar WHERE name = '" +
+                                    name + "'", null);
 
-        db.close();
+        if (cursor.getCount() == 0) {
+            Log.d("DATABASE: ", "Inserting into calendar");
+            insert = true;
+        }
+
+        read.close();
+
+        if (insert) {
+            //grab the database
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            //insert into the table!
+            ContentValues value = new ContentValues();
+            value.put("name", name);
+
+            db.insert("calendar", null, value);
+
+            db.close();
+        }
     }
 
     /**

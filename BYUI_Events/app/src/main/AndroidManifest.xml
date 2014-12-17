@@ -32,19 +32,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.eventsproject.byui_events.DayActivity"
+            android:name="com.eventsproject.activities.DayActivity"
             android:label="@string/title_activity_day" >
         </activity>
         <activity
-            android:name="com.eventsproject.byui_events.WeekActivity"
+            android:name="com.eventsproject.activities.WeekActivity"
             android:label="@string/title_activity_week" >
         </activity>
         <activity
-            android:name="com.eventsproject.byui_events.MonthActivity"
+            android:name="com.eventsproject.activities.MonthActivity"
             android:label="@string/title_activity_month" >
         </activity>
         <activity
-            android:name="com.eventsproject.byui_events.MyEventsActivity"
+            android:name="com.eventsproject.activities.MyEventsActivity"
             android:label="@string/title_activity_my_events" >
         </activity>
     </application>
