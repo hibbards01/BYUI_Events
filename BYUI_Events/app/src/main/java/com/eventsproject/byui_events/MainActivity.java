@@ -131,10 +131,6 @@ public class MainActivity extends TabActivity {
         int id = item.getItemId();
 
         switch(id) {
-            case R.id.action_settings:
-                Toast.makeText(this, "Running settings", Toast.LENGTH_LONG).show();
-                database.deleteEvents();
-                return true;
             case R.id.action_search:
                 return true;
             case R.id.filter_highlighted_events:
@@ -190,9 +186,9 @@ public class MainActivity extends TabActivity {
                 //and delete from the filter list
                 database.deleteAllFromFilter();
                 //now tell everyone!
-//                for (Observer ob : activities) {
-//                    ob.update(new Observable(), new Object());
-//                }
+                for (ActivityObserver ob : activities) {
+                    ob.update();
+                }
 
                 return true;
             }

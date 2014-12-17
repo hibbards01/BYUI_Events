@@ -10,6 +10,7 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.eventsproject.byui_events.ActivityObserver;
 import com.eventsproject.byui_events.Database;
 import com.eventsproject.byui_events.ExpandableListViewAdapter;
 import com.eventsproject.byui_events.R;
@@ -23,16 +24,14 @@ import java.util.Observable;
 import java.util.Observer;
 
 
-public class MyEventsActivity extends Activity {
+public class MyEventsActivity extends Activity implements ActivityObserver{
     /*
      * MEMBER VARIABLES
      */
-    private ExpandableListViewAdapter listAdapter = null;
-    private ExpandableListView expListView;
-    private TextView dateView;
+    private static ExpandableListViewAdapter listAdapter = null;
+    private static ExpandableListView expListView;
+    private static TextView dateView;
     private Database database = Database.getInstance();
-    //private GestureDetector gd;
-    private Date date;
 
     /*
      * MEMBER METHODS
@@ -48,11 +47,6 @@ public class MyEventsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_events);
 
-        //create a new gesture!
-        //gd = new GestureDetector(this, this);
-
-        //grab the date!
-        date = new Date();
         expListView = (ExpandableListView) findViewById(R.id.myEventsList);
         dateView = (TextView) findViewById(R.id.myEventsDate);
 
@@ -90,7 +84,7 @@ public class MyEventsActivity extends Activity {
         //now to put it on the screen!
         if (listAdapter == null) {
             Log.d("My_Events: ", "create list adapter");
-            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "MYEVENTS");
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, images, dateList, "MYEVENTS", this);
         } else {
             listAdapter.setLists(headerList, childList, images, dateList);
         }
@@ -128,6 +122,11 @@ public class MyEventsActivity extends Activity {
     protected void onResume() {
         super.onResume();
         //check to see if there are any new events saved!
+        setAdapter();
+    }
+
+    @Override
+    public void update() {
         setAdapter();
     }
 }

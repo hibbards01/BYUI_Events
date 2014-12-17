@@ -28,7 +28,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String SQL_CREATE_EVENT_TABLE =
             "CREATE TABLE IF NOT EXISTS event"
                     + "( event_id    INTEGER  NOT NULL"
-                    + ", name        TEXT     NOT NULL"
+                    + ", event_name  TEXT     NOT NULL"
                     + ", date        TEXT"
                     + ", start_time  TEXT"
                     + ", end_time    TEXT"
@@ -40,7 +40,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String SQL_CREATE_MY_EVENTS_TABLE =
             "CREATE TABLE IF NOT EXISTS my_events"
                     + "( event_id    INTEGER  NOT NULL"
-                    + ", name        TEXT     NOT NULL"
+                    + ", event_name  TEXT     NOT NULL"
                     + ", date        TEXT"
                     + ", start_time  TEXT"
                     + ", end_time    TEXT"
@@ -137,6 +137,20 @@ public class Database extends SQLiteOpenHelper {
         return database;
     }
 
+
+    public void deleteFromMy_Events(String header) {
+        //grab database!
+        SQLiteDatabase write = this.getWritableDatabase();
+
+        //now grab the right things!
+        String [] split = header.split("~");
+        String event_id = split[0];
+
+        write.delete("my_events", "event_id = " + event_id, null);
+
+        write.close();
+    }
+
     /**
      * INSERTMYEVENTS
      *  Insert the event into the myevents table!
@@ -167,7 +181,7 @@ public class Database extends SQLiteOpenHelper {
 
             // Grab everything!
             String eventId = cursor.getString(cursor.getColumnIndex("event_id"));
-            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String name = cursor.getString(cursor.getColumnIndex("event_name"));
             String dateText = cursor.getString(cursor.getColumnIndex("date"));
             String start_time = cursor.getString(cursor.getColumnIndex("start_time"));
             String end_time = cursor.getString(cursor.getColumnIndex("end_time"));
@@ -182,7 +196,7 @@ public class Database extends SQLiteOpenHelper {
             // Put the values into the content!
             ContentValues values = new ContentValues();
             values.put("event_id", eventId);
-            values.put("name", name);
+            values.put("event_name", name);
             values.put("date", dateText);
             values.put("start_time", start_time);
             values.put("end_time", end_time);
@@ -248,7 +262,7 @@ public class Database extends SQLiteOpenHelper {
 
             // Now put the values into the table!
             values.put("event_id", Integer.parseInt(textDate[0]));
-            values.put("name", textDate[1]);
+            values.put("event_name", textDate[1]);
             values.put("date", textDate[2]);
             values.put("start_time", textDate[3]);
             values.put("end_time", textDate[4]);
@@ -345,7 +359,7 @@ public class Database extends SQLiteOpenHelper {
      * @param db
      * @return
      */
-    public void grabQuery(String startDate, String endDate, SQLiteDatabase db) {
+    public Cursor grabQuery(String startDate, String endDate, SQLiteDatabase db) {
         //create a new cursor!
         Cursor cursor = null;
         String query;
@@ -394,9 +408,9 @@ public class Database extends SQLiteOpenHelper {
 
         Log.d("DATABASE: ", query);
 
-        //cursor = db.rawQuery(query, null);
+        cursor = db.rawQuery(query, null);
 
-        //return cursor;
+        return cursor;
     }
 
     /**
@@ -415,17 +429,7 @@ public class Database extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = null;
 
-        // Create select statement! Which one we want depends if startDate and endDate are the same or not.
-        if (startDate.equals(endDate)) {
-            cursor = db.rawQuery("SELECT * FROM event WHERE date = '"
-                    + startDate + "'", null);
-        } else {
-            cursor = db.rawQuery("SELECT * FROM event WHERE date BETWEEN '"
-                                + startDate + "' AND '" + endDate
-                                + "' ORDER BY date(date), start_time", null);
-        }
-
-        grabQuery(startDate, endDate, db);
+        cursor = grabQuery(startDate, endDate, db);
 
         gatherDataFromCursor(cursor, header, childs, images, dateList);
         db.close();
@@ -446,7 +450,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         // Create select statement! Which one we want depends if startDate and endDate are the same or not.
-        cursor = db.rawQuery("SELECT * FROM event WHERE name LIKE '%" + queryTitle + "%'", null);
+        cursor = db.rawQuery("SELECT * FROM event WHERE event_name LIKE '%" + queryTitle + "%'", null);
 
         gatherDataFromCursor(cursor, header, childs, images, dateList);
     }
@@ -474,7 +478,7 @@ public class Database extends SQLiteOpenHelper {
             // Now loop through all the events and grab them!
             for (int i = 0; i < cursor.getCount(); i++) {
                 String event_id = cursor.getString(cursor.getColumnIndex("event_id"));
-                String name = cursor.getString(cursor.getColumnIndex("name"));
+                String name = cursor.getString(cursor.getColumnIndex("event_name"));
                 String dateText = cursor.getString(cursor.getColumnIndex("date"));
                 String start_time = cursor.getString(cursor.getColumnIndex("start_time"));
                 String end_time = cursor.getString(cursor.getColumnIndex("end_time"));
@@ -488,6 +492,7 @@ public class Database extends SQLiteOpenHelper {
 
                 // This variable is only to make sure the maps have a unique key.
                 String event = event_id + "~" + name;
+                Log.d("DATABASE: ", event);
 
                 child = "Location: " + location + "\n" + category + "\n\n" + description + "\n";
 

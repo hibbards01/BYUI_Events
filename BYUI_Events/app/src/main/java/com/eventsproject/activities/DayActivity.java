@@ -30,6 +30,7 @@ public class DayActivity extends TemplateActivity implements ActivityObserver {
     private static ExpandableListViewAdapter listAdapter;
     private static ExpandableListView expListView;
     private static TextView textView;
+    private static Date date = new Date();
 
     /*
      * MEMBER METHODS
@@ -57,10 +58,10 @@ public class DayActivity extends TemplateActivity implements ActivityObserver {
     @Override
     protected void grabFromDatabase() {
         //grab the date!
-        Log.d("Day: ", date.toString());
+        Log.d("Day0: ", date.toString());
         stringDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
-        Log.d("Day: ", stringDate);
+        Log.d("Day1: ", stringDate);
 
         //now grab from the database!
         database.selectEvents(stringDate, stringDate, headerList, childList, imageList, dateList);
@@ -70,7 +71,7 @@ public class DayActivity extends TemplateActivity implements ActivityObserver {
     protected void setTitle() {
         //and grab the date so it can be at the title!
         stringDate = dateFormat(stringDate);
-        Log.d("Day: ", stringDate);
+        Log.d("Day2: ", stringDate);
 
         textView.setText(stringDate);
     }
@@ -79,7 +80,7 @@ public class DayActivity extends TemplateActivity implements ActivityObserver {
     protected void setUpExpandableListViewAdapter() {
         //now to put it on the screen!
         if (listAdapter == null) {
-            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, imageList, dateList, "DAY");
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, imageList, dateList, "DAY", null);
         } else {
             listAdapter.setLists(headerList, childList, imageList, dateList);
         }
@@ -145,6 +146,7 @@ public class DayActivity extends TemplateActivity implements ActivityObserver {
 
     @Override
     public void update() {
+        Log.d("DAY3: ", date.toString());
         setAdapter();
     }
 }

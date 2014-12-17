@@ -33,6 +33,7 @@ public class MonthActivity extends TemplateActivity implements ActivityObserver 
     private static ExpandableListViewAdapter listAdapter;
     private static ExpandableListView expListView;
     private static TextView textView;
+    private static Date date = new Date();
 
     /*
      * MEMBER METHDOS
@@ -77,7 +78,7 @@ public class MonthActivity extends TemplateActivity implements ActivityObserver 
     protected void setUpExpandableListViewAdapter() {
         //now to put it on the screen!
         if (listAdapter == null) {
-            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, imageList, dateList, "MONTH");
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, imageList, dateList, "MONTH", null);
         } else {
             listAdapter.setLists(headerList, childList, imageList, dateList);
         }

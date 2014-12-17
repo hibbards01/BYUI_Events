@@ -21,8 +21,6 @@ public abstract class TemplateActivity extends Activity {
     protected Database database = Database.getInstance();
     protected String stringDate;
 
-    protected Date date = new Date();
-
     protected List<String> headerList;
     protected Map<String, String> childList;
     protected List<byte[]> imageList;

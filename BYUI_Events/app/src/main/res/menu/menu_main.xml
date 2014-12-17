@@ -10,7 +10,7 @@
 
     <item android:id="@+id/action_filter"
         android:title="@string/action_filter"
-        android:showAsAction="ifRoom">
+        android:showAsAction="ifRoom|withText">
 
         <menu>
             <group android:checkableBehavior="all" android:id="@+id/filter_checkboxes">
@@ -144,9 +144,9 @@
         </menu>
     </item>
 
-    <item android:id="@+id/action_settings"
+    <!--<item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:icon="@drawable/ic_action_settings"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="ifRoom" />-->
 
 </menu>

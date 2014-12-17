@@ -81,7 +81,7 @@ public class SearchActivity  {
 
         //now to put it on the screen!
         if (listAdapter == null) {
-            listAdapter = new ExpandableListViewAdapter(activity, headerList, childList, images, dateList, "SEARCH");
+            listAdapter = new ExpandableListViewAdapter(activity, headerList, childList, images, dateList, "SEARCH", null);
         } else {
             listAdapter.setLists(headerList, childList, images, dateList);
         }

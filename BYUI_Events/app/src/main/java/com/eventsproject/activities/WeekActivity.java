@@ -30,7 +30,7 @@ public class WeekActivity extends TemplateActivity implements ActivityObserver {
     private static ExpandableListViewAdapter listAdapter;
     private static ExpandableListView expListView;
     private static TextView textView;
-
+    private static Date date = new Date();
     private String stringStartDate;
     private String stringEndDate;
 
@@ -84,7 +84,7 @@ public class WeekActivity extends TemplateActivity implements ActivityObserver {
     protected void setUpExpandableListViewAdapter() {
         // Now to put it on the screen!
         if (listAdapter == null) {
-            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, imageList, dateList, "WEEK");
+            listAdapter = new ExpandableListViewAdapter(this, headerList, childList, imageList, dateList, "WEEK", null);
         } else {
             listAdapter.setLists(headerList, childList, imageList, dateList);
         }

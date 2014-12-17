@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.text.Html;
 import android.util.Log;
@@ -36,6 +37,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     private Map<String, String[]> dateList;
     private LayoutInflater inflater;
     private String activity;
+    private ActivityObserver act;
 
     /*
      * MEMBER METHODS
@@ -52,13 +54,14 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
                                      Map<String, String> childList,
                                      List<byte[]> images,
                                      Map<String, String[]> dateList,
-                                     String type) {
+                                     String type, ActivityObserver act) {
         this.titleList = list;
         this.childList = childList;
         this.images = images;
         this.dateList = dateList;
         inflater = activity.getLayoutInflater();
         this.activity = type;
+        this.act = act;
     }
 
     /**
@@ -96,9 +99,6 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
         //now put it into the view!
         if (view == null) {
-            //(LayoutInflater) context
-//                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
             //now convert it!
             view = inflater.inflate(R.layout.list_child_view, null);
         }
@@ -128,7 +128,25 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
                 }
             });
         } else {
-            button.setVisibility(View.INVISIBLE);
+            button.setText("Delete");
+
+            button.setOnClickListener(new Button.OnClickListener() {
+                int num = groupPosition;
+                @Override
+                public void onClick(View v) {
+                    //delete the event!
+                    String header = (String) getGroup(num);
+
+                    //grab database
+                    Database database = Database.getInstance();
+
+                    //now delete it!
+                    database.deleteFromMy_Events(header);
+
+                    //tell the activity!
+                    act.update();
+                }
+            });
         }
 
         //now set the text!
@@ -191,7 +209,7 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
                 //now set the image!
                 imageView.setImageBitmap(bitmap);
             } else {
-                imageView.setImageDrawable(null);
+                imageView.setImageResource(R.drawable.no_image);
             }
 
             //now add the title text!

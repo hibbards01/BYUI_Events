@@ -80,6 +80,7 @@ public class DatabaseAsyncTask extends AsyncTask<SQLDatabase, Object, Object> {
         observers.add(day);
         observers.add(week);
         observers.add(month);
+        observers.add(myevents);
         activity.addObserver(observers);
 
         Intent intent = new Intent(activity, observers.get(0).getClass());
@@ -101,7 +102,7 @@ public class DatabaseAsyncTask extends AsyncTask<SQLDatabase, Object, Object> {
         tab3.setIndicator("Month");
         tab3.setContent(intent);
 
-        intent = new Intent(activity, myevents.getClass());
+        intent = new Intent(activity, observers.get(3).getClass());
 
         tab4.setIndicator("My Events");
         tab4.setContent(intent);
