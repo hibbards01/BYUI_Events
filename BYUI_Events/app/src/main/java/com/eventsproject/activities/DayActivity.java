@@ -117,13 +117,12 @@ public class DayActivity extends TemplateActivity implements ActivityObserver {
         //grab the dates!
         final Calendar calendar = Calendar.getInstance();
 
-        //set the time
-        calendar.setTime(date);
-
         //now create the listeners!
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //set the time
+                calendar.setTime(date);
                 calendar.add(Calendar.DATE, -1);
 
                 date = calendar.getTime();
@@ -134,6 +133,8 @@ public class DayActivity extends TemplateActivity implements ActivityObserver {
         forward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //set the time
+                calendar.setTime(date);
                 calendar.add(Calendar.DATE, 1);
 
                 date = calendar.getTime();
